@@ -4,7 +4,6 @@
 @theme {
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
   --font-heading: "Space Grotesk", "Inter", system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
   --color-bg: #0a0b0d;
   --color-surface: #131519;
@@ -66,9 +65,9 @@ html.light {
   color-scheme: light;
 }
 
-/* Base-layer so utility classes (e.g. font-mono) can still override these defaults —
-   unlayered rules would otherwise always win over Tailwind's utilities regardless of
-   specificity, since cascade layers are resolved before specificity is even considered. */
+/* Base-layer so Tailwind utility classes can still override these defaults — unlayered
+   rules would otherwise always win over utilities regardless of specificity, since cascade
+   layers are resolved before specificity is even considered. */
 @layer base {
   body {
     margin: 0;

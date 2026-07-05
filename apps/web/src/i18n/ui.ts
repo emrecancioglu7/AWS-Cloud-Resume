@@ -1,5 +1,6 @@
 export const uiText = {
   en: {
+    skipToContent: "Skip to content",
     nav: {
       toggleMenu: "Toggle menu",
       lightMode: "Light Mode",
@@ -64,6 +65,7 @@ export const uiText = {
     scrollTop: "Scroll to top",
   },
   tr: {
+    skipToContent: "İçeriğe atla",
     nav: {
       toggleMenu: "Menüyü aç/kapat",
       lightMode: "Açık Mod",

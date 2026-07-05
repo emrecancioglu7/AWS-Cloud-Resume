@@ -6,6 +6,7 @@ import { uiText } from "../i18n/ui";
 import { useLanguage } from "../i18n/LanguageContext";
 import { useTheme } from "../theme/ThemeContext";
 import { useScrollSpy } from "../hooks/useScrollSpy";
+import { focusRingInset } from "../styles/focusRing";
 
 const icons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   home: Home,
@@ -15,8 +16,6 @@ const icons: Record<string, React.ComponentType<{ size?: number; className?: str
 };
 
 const sectionIds = uiText.en.nav.links.map((l) => l.href.slice(1));
-
-const focusRing = "focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-(--color-accent)";
 
 // Sidebar expansion is driven by tracking the raw cursor position against the sidebar's rect
 // on every mousemove, rather than CSS :hover or mouseenter/mouseleave — Chromium's view
@@ -76,7 +75,7 @@ export function Nav() {
     );
     const className = `relative flex items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium transition-colors active:scale-95 ${
       isActive ? "text-(--color-accent)" : "text-(--color-text-muted) hover:bg-(--color-surface-2) hover:text-(--color-text)"
-    } ${focusRing}`;
+    } ${focusRingInset}`;
 
     return isHome ? (
       <a key={link.href} href={link.href} className={className} onClick={() => setOpen(false)}>
@@ -94,7 +93,7 @@ export function Nav() {
       <button
         aria-label={ui.nav.toggleMenu}
         onClick={() => setOpen((v) => !v)}
-        className={`fixed top-4 right-4 z-50 flex h-10 w-10 items-center justify-center rounded-lg border border-(--color-border) bg-(--color-surface) text-(--color-text) transition-transform active:scale-90 lg:hidden ${focusRing}`}
+        className={`fixed top-4 right-4 z-50 flex h-10 w-10 items-center justify-center rounded-lg border border-(--color-border) bg-(--color-surface) text-(--color-text) transition-transform active:scale-90 lg:hidden ${focusRingInset}`}
       >
         {open ? <X size={20} /> : <Menu size={20} />}
       </button>
@@ -106,7 +105,7 @@ export function Nav() {
         } ${open ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div>
-          <Link to="/" className={`mb-8 flex items-center gap-3 rounded-lg px-0.5 ${focusRing}`}>
+          <Link to="/" className={`mb-8 flex items-center gap-3 rounded-lg px-0.5 ${focusRingInset}`}>
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-(--color-accent-soft) text-sm font-bold text-(--color-accent)">
               EÇ
             </span>
@@ -122,7 +121,7 @@ export function Nav() {
               toggleLang();
               if (e.detail !== 0) e.currentTarget.blur();
             }}
-            className={`flex items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium text-(--color-text-muted) transition-colors active:scale-95 hover:bg-(--color-surface-2) hover:text-(--color-text) ${focusRing}`}
+            className={`flex items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium text-(--color-text-muted) transition-colors active:scale-95 hover:bg-(--color-surface-2) hover:text-(--color-text) ${focusRingInset}`}
           >
             <Languages size={20} className="shrink-0" />
             <span className={labelClass}>{lang === "en" ? "Türkçe" : "English"}</span>
@@ -133,7 +132,7 @@ export function Nav() {
               toggleTheme({ x: e.clientX, y: e.clientY });
               if (e.detail !== 0) e.currentTarget.blur();
             }}
-            className={`flex items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium text-(--color-text-muted) transition-colors active:scale-95 hover:bg-(--color-surface-2) hover:text-(--color-text) ${focusRing}`}
+            className={`flex items-center gap-3 rounded-lg px-3.5 py-2.5 text-sm font-medium text-(--color-text-muted) transition-colors active:scale-95 hover:bg-(--color-surface-2) hover:text-(--color-text) ${focusRingInset}`}
           >
             <span className="relative flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden">
               <AnimatePresence mode="wait" initial={false}>

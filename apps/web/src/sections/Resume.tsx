@@ -5,6 +5,7 @@ import { Reveal } from "../components/Reveal";
 import { SectionHeading } from "../components/SectionHeading";
 import { Timeline, TimelineItem } from "../components/Timeline";
 import { AnimatedMetrics } from "../components/AnimatedMetrics";
+import { focusRing } from "../styles/focusRing";
 
 function ResumeTitle({ children }: { children: ReactNode }) {
   return (
@@ -50,7 +51,7 @@ export function Resume() {
                     href={p.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded font-semibold underline decoration-(--color-accent) underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-accent)"
+                    className={`inline-flex items-center gap-1 rounded font-semibold underline decoration-(--color-accent) underline-offset-2 ${focusRing}`}
                   >
                     {p.title} <ExternalLink size={14} />
                   </a>

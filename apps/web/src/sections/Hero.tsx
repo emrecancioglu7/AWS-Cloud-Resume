@@ -7,9 +7,9 @@ import { useTypedRotator } from "../hooks/useTypedRotator";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { RevealGroup, RevealItem } from "../components/RevealGroup";
 import { Magnetic } from "../components/Magnetic";
+import { focusRing } from "../styles/focusRing";
 
-const linkClass =
-  "flex h-11 w-11 items-center justify-center rounded-full border border-(--color-border) text-(--color-text) transition-all duration-200 hover:border-(--color-accent) hover:text-(--color-accent) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-accent)";
+const linkClass = `flex h-11 w-11 items-center justify-center rounded-full border border-(--color-border) text-(--color-text) transition-all duration-200 hover:border-(--color-accent) hover:text-(--color-accent) ${focusRing}`;
 
 export function Hero() {
   const { profile, ui } = useContent();
@@ -87,7 +87,7 @@ export function Hero() {
                 href={profile.resumePdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-11 items-center gap-2 rounded-full border border-(--color-border) px-5 text-sm font-medium text-(--color-text) transition-all duration-200 hover:border-(--color-accent) hover:text-(--color-accent) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-accent)"
+                className={`flex h-11 items-center gap-2 rounded-full border border-(--color-border) px-5 text-sm font-medium text-(--color-text) transition-all duration-200 hover:border-(--color-accent) hover:text-(--color-accent) ${focusRing}`}
               >
                 <FileText size={16} /> {ui.hero.resumeButton}
               </a>

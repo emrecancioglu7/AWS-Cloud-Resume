@@ -21,3 +21,9 @@ variable "admin_temp_password" {
   type        = string
   sensitive   = true
 }
+
+variable "cors_allowed_origins" {
+  description = "Backend API'ye (API Gateway) tarayıcıdan istek atmasına izin verilen origin'ler"
+  type        = list(string)
+  default     = ["https://emrecancioglu.com", "http://localhost:5173"]
+}

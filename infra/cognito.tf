@@ -43,12 +43,12 @@ resource "aws_cognito_user_pool_client" "web" {
   name         = "${var.project_name}-web-client"
   user_pool_id = aws_cognito_user_pool.admin.id
 
-  generate_secret                     = false
-  explicit_auth_flows                 = ["ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
-  prevent_user_existence_errors       = "ENABLED"
-  access_token_validity               = 1
-  id_token_validity                   = 1
-  refresh_token_validity              = 30
+  generate_secret               = false
+  explicit_auth_flows           = ["ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
+  prevent_user_existence_errors = "ENABLED"
+  access_token_validity         = 1
+  id_token_validity             = 1
+  refresh_token_validity        = 30
   token_validity_units {
     access_token  = "hours"
     id_token      = "hours"
@@ -58,8 +58,8 @@ resource "aws_cognito_user_pool_client" "web" {
 
 # Tek admin kullanıcısı. Geçici şifre ilk girişte değiştirilecek şekilde ayarlanır.
 resource "aws_cognito_user" "admin" {
-  user_pool_id   = aws_cognito_user_pool.admin.id
-  username       = var.admin_email
+  user_pool_id       = aws_cognito_user_pool.admin.id
+  username           = var.admin_email
   temporary_password = var.admin_temp_password
 
   attributes = {

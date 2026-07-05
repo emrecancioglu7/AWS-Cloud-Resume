@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { GithubIcon, LinkedinIcon } from "./BrandIcons";
 import { useContent } from "../data/useContent";
 import { fetchVisitorCount } from "../lib/visitorCounter";
+import { focusRing } from "../styles/focusRing";
 
 export function Footer() {
   const { profile, ui } = useContent();
@@ -24,7 +25,7 @@ export function Footer() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="LinkedIn"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-(--color-border) text-(--color-text-muted) transition-colors hover:border-(--color-accent) hover:text-(--color-accent) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-accent)"
+          className={`flex h-9 w-9 items-center justify-center rounded-full border border-(--color-border) text-(--color-text-muted) transition-colors hover:border-(--color-accent) hover:text-(--color-accent) ${focusRing}`}
         >
           <LinkedinIcon size={16} />
         </a>
@@ -33,7 +34,7 @@ export function Footer() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="GitHub"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-(--color-border) text-(--color-text-muted) transition-colors hover:border-(--color-accent) hover:text-(--color-accent) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-accent)"
+          className={`flex h-9 w-9 items-center justify-center rounded-full border border-(--color-border) text-(--color-text-muted) transition-colors hover:border-(--color-accent) hover:text-(--color-accent) ${focusRing}`}
         >
           <GithubIcon size={16} />
         </a>

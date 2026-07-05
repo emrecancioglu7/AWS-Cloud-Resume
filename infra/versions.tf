@@ -6,17 +6,18 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
+    archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.4"
+    }
   }
 
-  # Kendi state bucket'ınız ve kilit tablonuzla doldurun.
-  # `terraform init` çalıştırmadan önce infra/README.md dosyasını okuyun.
-  backend "s3" {
-    # bucket         = "emrecancioglu-terraform-state"
-    # key            = "personal-website/terraform.tfstate"
-    # region         = "eu-north-1"
-    # dynamodb_table = "terraform-locks"
-    # encrypt        = true
-  }
+  # İlk apply için kasıtlı olarak local state kullanılıyor (backend bloğu yok) —
+  # terraform.tfstate bu dizinde, kendi bilgisayarınızda oluşacak (zaten .gitignore'da).
+  # Bu dosyayı ASLA silmeyin/kaybetmeyin: Terraform'un hangi AWS kaynaklarını
+  # yönettiğinin tek kaydı budur. Güvenli bir yere (parola yöneticisi, şifreli
+  # yedek) kopyalamanızı öneririz. İleride S3 remote backend'e geçmek isterseniz
+  # infra/README.md'deki "Remote state'e geçiş" bölümüne bakın.
 }
 
 provider "aws" {

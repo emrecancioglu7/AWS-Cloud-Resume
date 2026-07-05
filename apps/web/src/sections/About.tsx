@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useContent } from "../data/useContent";
 import { Reveal } from "../components/Reveal";
 import { SectionHeading } from "../components/SectionHeading";
+import { focusRing } from "../styles/focusRing";
 
 function calculateAge(birthDate: string) {
   const today = new Date();
@@ -59,7 +60,7 @@ export function About() {
                 {href ? (
                   <a
                     href={href}
-                    className="rounded text-(--color-text-muted) underline-offset-2 hover:text-(--color-accent) hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-accent)"
+                    className={`rounded text-(--color-text-muted) underline-offset-2 hover:text-(--color-accent) hover:underline ${focusRing}`}
                   >
                     {value}
                   </a>
