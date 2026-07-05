@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      (function () {
+        var stored = localStorage.getItem("theme");
+        var theme = stored === "dark" || stored === "light" ? stored : window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        if (theme === "light") document.documentElement.classList.add("light");
+      })();
+    </script>
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Emre Çancıoğlu — Software Developer & Digital Transformation Expert. Resume, skills, and professional experience." />
+    <link rel="canonical" href="https://www.emrecancioglu.com/" />
+    <title>Emre Çancıoğlu — Personal Website</title>
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Emre Çancıoğlu — Personal Website" />
+    <meta property="og:description" content="Software Developer & Digital Transformation Expert. Resume, skills, and professional experience." />
+    <meta property="og:url" content="https://www.emrecancioglu.com/" />
+    <meta property="og:image" content="https://www.emrecancioglu.com/img/profile-img.jpg" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Emre Çancıoğlu — Personal Website" />
+    <meta name="twitter:description" content="Software Developer & Digital Transformation Expert. Resume, skills, and professional experience." />
+    <meta name="twitter:image" content="https://www.emrecancioglu.com/img/profile-img.jpg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Emre Çancıoğlu",
+        "jobTitle": "Software Developer | Digital Transformation Expert",
+        "url": "https://www.emrecancioglu.com/",
+        "image": "https://www.emrecancioglu.com/img/profile-img.jpg",
+        "email": "mailto:emrecancioglu7@gmail.com",
+        "sameAs": ["https://www.linkedin.com/in/emrecancioglu/", "https://github.com/emrecancioglu7"]
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,123 @@
+@import "tailwindcss";
+@custom-variant light (&:where(.light, .light *));
+
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-heading: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  --color-bg: #0a0b0d;
+  --color-surface: #131519;
+  --color-surface-2: #1a1d22;
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-text: #ececea;
+  --color-text-muted: #9a9a97;
+  --color-accent: #34d399;
+  --color-accent-strong: #10b981;
+  --color-accent-soft: rgba(52, 211, 153, 0.12);
+}
+
+:root.light {
+  --color-bg: #fafaf9;
+  --color-surface: #ffffff;
+  --color-surface-2: #f2f1ee;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-text: #17181a;
+  --color-text-muted: #5b5c5e;
+  --color-accent: #059669;
+  --color-accent-strong: #047857;
+  --color-accent-soft: rgba(5, 150, 105, 0.08);
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    fill 0.3s ease,
+    stroke 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* While the circular theme-reveal view transition plays, every element's own color
+   crossfade (above) would otherwise re-trigger at the same time and compete with it. */
+html.vt-active *,
+html.vt-active *::before,
+html.vt-active *::after {
+  transition: none !important;
+}
+
+html.light {
+  color-scheme: light;
+}
+
+/* Base-layer so utility classes (e.g. font-mono) can still override these defaults —
+   unlayered rules would otherwise always win over Tailwind's utilities regardless of
+   specificity, since cascade layers are resolved before specificity is even considered. */
+@layer base {
+  body {
+    margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
+::selection {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+}
+
+/* The transition overlay paints on top of the whole page — without this, the browser routes
+   :hover/pointer events to the snapshot instead of the real sidebar underneath, so hovering
+   the sidebar through a theme change would otherwise flicker it back to its mini width. */
+::view-transition-group(root) {
+  animation-duration: 500ms;
+  pointer-events: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  pointer-events: none;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+  will-change: clip-path;
+  animation: theme-reveal 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0px at var(--theme-transition-x, 50%) var(--theme-transition-y, 50%));
+  }
+  to {
+    clip-path: circle(var(--theme-transition-radius, 150%) at var(--theme-transition-x, 50%) var(--theme-transition-y, 50%));
+  }
+}
