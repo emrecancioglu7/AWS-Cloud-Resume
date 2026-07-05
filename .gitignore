@@ -1,0 +1,10 @@
+# OS / editor junk that can show up anywhere in the repo, not just inside a specific app.
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

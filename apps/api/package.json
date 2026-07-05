@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "build": "esbuild src/handler.ts --bundle --platform=node --target=node20 --format=esm --external:@aws-sdk/* --outfile=dist/index.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.157",
     "@types/node": "^24.13.2",
     "esbuild": "^0.28.1",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "vitest": "^4.1.9"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.716.0",

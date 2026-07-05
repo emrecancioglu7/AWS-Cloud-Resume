@@ -14,6 +14,11 @@ interface AuthContextValue {
   confirmMfaSetup: (totpCode: string) => Promise<void>;
   confirmMfaCode: (totpCode: string) => Promise<void>;
   signOut: () => void;
+  // Returns a guaranteed-fresh ID token, silently using the refresh token if the cached one has
+  // expired (Cognito ID/access tokens are only valid for 1 hour — see cognito.tf). Use this for
+  // API calls instead of the static `idToken` field above, which is only a snapshot from the
+  // last sign-in/render and goes stale after an hour.
+  getIdToken: () => Promise<string>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -158,8 +163,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus("signed-out");
   }
 
+  function getIdToken() {
+    return new Promise<string>((resolve, reject) => {
+      const user = userPool.getCurrentUser();
+      if (!user) return reject(new Error("Oturum yok, tekrar giriş yapın."));
+
+      user.getSession((err: Error | null, session: CognitoUserSession | null) => {
+        if (err || !session?.isValid()) return reject(err ?? new Error("Oturum geçersiz, tekrar giriş yapın."));
+        resolve(session.getIdToken().getJwtToken());
+      });
+    });
+  }
+
   return (
-    <AuthContext.Provider value={{ status, idToken, email, mfaSetupSecret, signIn, completeNewPassword, confirmMfaSetup, confirmMfaCode, signOut }}>
+    <AuthContext.Provider
+      value={{ status, idToken, email, mfaSetupSecret, signIn, completeNewPassword, confirmMfaSetup, confirmMfaCode, signOut, getIdToken }}
+    >
       {children}
     </AuthContext.Provider>
   );

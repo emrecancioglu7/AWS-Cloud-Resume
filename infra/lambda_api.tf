@@ -60,6 +60,7 @@ resource "aws_iam_role_policy" "api_lambda_dynamodb" {
         "dynamodb:UpdateItem",
         "dynamodb:DeleteItem",
         "dynamodb:Query",
+        "dynamodb:BatchWriteItem",
       ]
       Resource = [
         aws_dynamodb_table.portfolio.arn,
@@ -94,7 +95,7 @@ resource "aws_apigatewayv2_api" "http" {
 
   cors_configuration {
     allow_origins = var.cors_allowed_origins
-    allow_methods = ["GET"]
+    allow_methods = ["GET", "POST", "PUT", "DELETE"]
     allow_headers = ["authorization", "content-type"]
     max_age       = 300
   }
@@ -141,6 +142,94 @@ resource "aws_apigatewayv2_route" "health" {
 resource "aws_apigatewayv2_route" "portfolio" {
   api_id             = aws_apigatewayv2_api.http.id
   route_key          = "GET /portfolio"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "funds_create" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "POST /funds"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "funds_add_price" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "POST /funds/{fundCode}/prices"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "funds_list_prices" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "GET /funds/{fundCode}/prices"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "portfolio_summary" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "GET /portfolio/summary"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "funds_update" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "PUT /funds/{fundCode}"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "funds_delete" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "DELETE /funds/{fundCode}"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "funds_update_price" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "PUT /funds/{fundCode}/prices/{date}"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "funds_delete_price" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "DELETE /funds/{fundCode}/prices/{date}"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "funds_add_transaction" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "POST /funds/{fundCode}/transactions"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "funds_list_transactions" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "GET /funds/{fundCode}/transactions"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "funds_delete_transaction" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "DELETE /funds/{fundCode}/transactions/{txnId}"
   target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
