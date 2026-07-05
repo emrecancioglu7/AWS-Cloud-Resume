@@ -20,7 +20,11 @@ jobs:
 
       - name: Install dependencies
         working-directory: apps/web
-        run: npm ci
+        # `npm ci` fails intermittently here: @tailwindcss/oxide-wasm32-wasi (an optional wasm
+        # fallback) ships its own deps via bundleDependencies, and npm's lockfile-sync check for
+        # that pattern is inconsistent across npm versions. `npm install` skips that strict
+        # check and resolves correctly regardless.
+        run: npm install
 
       - name: Build
         working-directory: apps/web
