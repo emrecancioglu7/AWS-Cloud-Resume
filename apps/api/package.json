@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "esbuild src/handler.ts --bundle --platform=node --target=node20 --format=esm --external:@aws-sdk/* --outfile=dist/index.mjs",
+    "build": "npm run build:api && npm run build:processor",
+    "build:api": "esbuild src/handler.ts --bundle --platform=node --target=node20 --format=esm --external:@aws-sdk/* --outfile=dist/api/index.mjs",
+    "build:processor": "esbuild src/handler-processor.ts --bundle --platform=node --target=node20 --format=esm --external:@aws-sdk/* --outfile=dist/processor/index.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
@@ -17,6 +19,10 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.716.0",
-    "@aws-sdk/lib-dynamodb": "^3.716.0"
+    "@aws-sdk/client-s3": "^3.1079.0",
+    "@aws-sdk/client-ssm": "^3.1079.0",
+    "@aws-sdk/lib-dynamodb": "^3.716.0",
+    "@aws-sdk/s3-request-presigner": "^3.1079.0",
+    "pdf-lib": "^1.17.1"
   }
 }

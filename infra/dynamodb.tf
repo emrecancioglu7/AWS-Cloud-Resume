@@ -1,12 +1,15 @@
-# Tek tablo tasarımı: Fund / Transaction / PriceHistory kayıtlarının hepsi bu tabloda tutulur.
+# Tek tablo tasarımı: Fund / Transaction / PriceHistory ve (Faz 4) kredi kartı Statement/TXN
+# kayıtlarının hepsi bu tabloda tutulur.
 #
 # Erişim örüntüleri:
-#   Fund metadata      pk = FUND#<fundCode>        sk = METADATA
-#   Transaction        pk = FUND#<fundCode>        sk = TXN#<isoDate>#<txnId>
-#   Price history      pk = FUND#<fundCode>        sk = PRICE#<isoDate>
-#   Tüm portföyde tarihe göre sıralı liste (GSI1)  gsi1pk = <entityType>  gsi1sk = <isoDate>#<fundCode>
-#
-# Faz 3'teki backend API bu tabloya yazacak; şu an sadece şema tanımlanıyor, veri yok.
+#   Fund metadata          pk = FUND#<fundCode>       sk = METADATA
+#   Fund transaction       pk = FUND#<fundCode>       sk = TXN#<isoDate>#<txnId>
+#   Fund price history     pk = FUND#<fundCode>       sk = PRICE#<isoDate>
+#   Tüm portföyde tarihe göre sıralı liste (GSI1)     gsi1pk = FUND|PRICE|TXN         gsi1sk = <isoDate>#<fundCode>
+#   Kredi kartı ekstre metadata (Faz 4)               pk = STATEMENT#<statementId>    sk = METADATA
+#   Kredi kartı işlemi (Faz 4)                        pk = STATEMENT#<statementId>    sk = TXN#<isoDate>#<txnId>
+#   Ekstreleri tarihe göre sıralı liste (GSI1)        gsi1pk = STATEMENT              gsi1sk = <uploadedAt>#<statementId>
+#   Tüm kart işlemlerini tarihe göre sıralı liste (GSI1) gsi1pk = CCTXN               gsi1sk = <isoDate>#<statementId>#<txnId>
 resource "aws_dynamodb_table" "portfolio" {
   name         = "${var.project_name}-portfolio"
   billing_mode = "PAY_PER_REQUEST" # ücretsiz katmana uygun, sabit kapasite maliyeti yok

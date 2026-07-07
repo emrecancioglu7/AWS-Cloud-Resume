@@ -65,7 +65,19 @@ describe("AdminLogin", () => {
 
   it("shows the MFA code form when mfa-required", () => {
     renderLogin({ status: "mfa-required" });
-    expect(screen.getByPlaceholderText("6 haneli kod")).toBeInTheDocument();
+    expect(screen.getByLabelText("Kod hanesi 1")).toBeInTheDocument();
+  });
+
+  it("auto-submits the MFA code once all 6 digits are entered", async () => {
+    const user = userEvent.setup();
+    const confirmMfaCode = vi.fn().mockResolvedValue(undefined);
+    renderLogin({ status: "mfa-required", confirmMfaCode });
+
+    for (let i = 1; i <= 6; i++) {
+      await user.type(screen.getByLabelText(`Kod hanesi ${i}`), String(i));
+    }
+
+    expect(confirmMfaCode).toHaveBeenCalledWith("123456");
   });
 
   it("shows an error message when signIn rejects", async () => {
@@ -77,6 +89,7 @@ describe("AdminLogin", () => {
     await user.type(screen.getByPlaceholderText("Şifre"), "wrong");
     await user.click(screen.getByRole("button", { name: "Giriş yap" }));
 
-    expect(await screen.findByText("Incorrect username or password.")).toBeInTheDocument();
+    // The raw Cognito error is translated to Turkish for display — see cognitoErrors.ts.
+    expect(await screen.findByText("E-posta veya şifre hatalı.")).toBeInTheDocument();
   });
 });

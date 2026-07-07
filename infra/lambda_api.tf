@@ -8,8 +8,8 @@
 
 data "archive_file" "api" {
   type        = "zip"
-  source_dir  = "${path.module}/../apps/api/dist"
-  output_path = "${path.module}/../apps/api/dist.zip"
+  source_dir  = "${path.module}/../apps/api/dist/api"
+  output_path = "${path.module}/../apps/api/dist/api.zip"
 }
 
 resource "aws_iam_role" "api_lambda" {
@@ -66,6 +66,24 @@ resource "aws_iam_role_policy" "api_lambda_dynamodb" {
         aws_dynamodb_table.portfolio.arn,
         "${aws_dynamodb_table.portfolio.arn}/index/*",
       ]
+    }]
+  })
+}
+
+# API Lambda, ekstre yükleme ve orijinal PDF görüntüleme için tarayıcıya presigned S3 URL'leri
+# üretiyor (bkz. routes/statements.ts). Presigned URL'nin imzalayıcı kimlik bilgileri gerçekten
+# ilgili S3 iznine sahip olmazsa, tarayıcı URL'i kullanmaya çalıştığında S3 403 döner — bu yüzden
+# PutObject kadar GetObject de burada gerekli.
+resource "aws_iam_role_policy" "api_lambda_s3_statements" {
+  name = "${var.project_name}-api-lambda-s3-statements"
+  role = aws_iam_role.api_lambda.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["s3:PutObject", "s3:GetObject"]
+      Resource = "${aws_s3_bucket.statements.arn}/*"
     }]
   })
 }
@@ -230,6 +248,94 @@ resource "aws_apigatewayv2_route" "funds_list_transactions" {
 resource "aws_apigatewayv2_route" "funds_delete_transaction" {
   api_id             = aws_apigatewayv2_api.http.id
   route_key          = "DELETE /funds/{fundCode}/transactions/{txnId}"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "statements_create" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "POST /statements"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "statements_list" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "GET /statements"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "statements_get" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "GET /statements/{statementId}"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "statements_delete" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "DELETE /statements/{statementId}"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "statements_update_month" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "PUT /statements/{statementId}"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "spending_summary" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "GET /spending/summary"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "statements_update_transaction_category" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "PUT /statements/{statementId}/transactions/{txnId}"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "budgets_list" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "GET /budgets"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "budgets_set" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "PUT /budgets"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "bank_limits_list" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "GET /bank-limits"
+  target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
+  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.cognito.id
+}
+
+resource "aws_apigatewayv2_route" "bank_limits_set" {
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "PUT /bank-limits"
   target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
   authorization_type = "JWT"
   authorizer_id      = aws_apigatewayv2_authorizer.cognito.id

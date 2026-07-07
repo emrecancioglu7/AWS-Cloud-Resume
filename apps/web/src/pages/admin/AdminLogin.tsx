@@ -1,11 +1,15 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { AlertCircle, ArrowLeft, KeyRound, Loader2, Lock, Mail, ShieldCheck } from "lucide-react";
+import { AlertCircle, ArrowLeft, Eye, EyeOff, Info, Loader2, Lock, Mail, ShieldCheck } from "lucide-react";
 import QRCode from "qrcode";
 import { useAuth } from "../../auth/AuthContext";
 import { focusRing } from "../../styles/focusRing";
-import { IconField, SubmitButton } from "./formFields";
+import { translateAuthError } from "./cognitoErrors";
+import { OtpInput } from "./OtpInput";
+import { Tooltip } from "./Tooltip";
+import { passwordStrength, passwordStrengthColors, passwordStrengthLabels } from "./passwordStrength";
+import { IconField, SubmitButton, inputClass } from "./formFields";
 
 const MFA_ISSUER = "EmreCancioglu-Admin";
 
@@ -14,6 +18,72 @@ const stageVariants = {
   animate: { opacity: 1, y: 0 },
   exit: { opacity: 0, y: -8 },
 };
+
+const passwordInputClass = `${inputClass} pr-10`;
+
+function PasswordField({
+  value,
+  onChange,
+  placeholder,
+  autoComplete,
+  minLength,
+  autoFocus,
+}: {
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  placeholder: string;
+  autoComplete: string;
+  minLength?: number;
+  autoFocus?: boolean;
+}) {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <div className="relative">
+      <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-(--color-text-muted)">
+        <Lock size={16} />
+      </span>
+      <input
+        type={visible ? "text" : "password"}
+        required
+        minLength={minLength}
+        autoComplete={autoComplete}
+        autoFocus={autoFocus}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        className={passwordInputClass}
+      />
+      <button
+        type="button"
+        onClick={() => setVisible((v) => !v)}
+        className="absolute inset-y-0 right-3 flex items-center text-(--color-text-muted) hover:text-(--color-text)"
+        aria-label={visible ? "Şifreyi gizle" : "Şifreyi göster"}
+      >
+        {visible ? <EyeOff size={16} /> : <Eye size={16} />}
+      </button>
+    </div>
+  );
+}
+
+function PasswordStrengthMeter({ password }: { password: string }) {
+  if (!password) return null;
+  const strength = passwordStrength(password);
+  const bars = strength === "strong" ? 3 : strength === "medium" ? 2 : 1;
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex flex-1 gap-1">
+        {[0, 1, 2].map((i) => (
+          <span
+            key={i}
+            className={`h-1 flex-1 rounded-full transition-colors ${i < bars ? passwordStrengthColors[strength] : "bg-(--color-border)"}`}
+          />
+        ))}
+      </div>
+      <span className="text-xs text-(--color-text-muted)">{passwordStrengthLabels[strength]}</span>
+    </div>
+  );
+}
 
 export function AdminLogin() {
   const { status, email, mfaSetupSecret, signIn, completeNewPassword, confirmMfaSetup, confirmMfaCode } = useAuth();
@@ -47,7 +117,7 @@ export function AdminLogin() {
     try {
       await action();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Bir şeyler ters gitti, tekrar deneyin.");
+      setError(translateAuthError(err instanceof Error ? err.message : "Bir şeyler ters gitti, tekrar deneyin."));
     } finally {
       setBusy(false);
     }
@@ -71,6 +141,14 @@ export function AdminLogin() {
   function handleMfaCode(e: FormEvent) {
     e.preventDefault();
     run(() => confirmMfaCode(totpCode));
+  }
+
+  function submitMfaSetup(code: string) {
+    run(() => confirmMfaSetup(code));
+  }
+
+  function submitMfaCode(code: string) {
+    run(() => confirmMfaCode(code));
   }
 
   const subtitle =
@@ -126,7 +204,7 @@ export function AdminLogin() {
 
         <AnimatePresence mode="wait">
           {status === "loading" && (
-            <motion.div key="loading" {...stageVariants} className="flex justify-center py-4">
+            <motion.div key="loading" {...stageVariants} className="flex min-h-40 items-center justify-center">
               <Loader2 size={20} className="animate-spin text-(--color-text-muted)" />
             </motion.div>
           )}
@@ -137,15 +215,13 @@ export function AdminLogin() {
                 icon={<Mail size={16} />}
                 type="email"
                 required
+                autoFocus
                 autoComplete="username"
                 placeholder="E-posta"
                 value={emailInput}
                 onChange={(e) => setEmailInput(e.target.value)}
               />
-              <IconField
-                icon={<Lock size={16} />}
-                type="password"
-                required
+              <PasswordField
                 autoComplete="current-password"
                 placeholder="Şifre"
                 value={password}
@@ -156,18 +232,19 @@ export function AdminLogin() {
           )}
 
           {status === "new-password-required" && (
-            <motion.form key="new-password" {...stageVariants} onSubmit={handleNewPassword} className="flex flex-col gap-4">
-              <IconField
-                icon={<Lock size={16} />}
-                type="password"
-                required
+            <motion.form key="new-password" {...stageVariants} onSubmit={handleNewPassword} className="flex flex-col gap-2">
+              <PasswordField
+                autoFocus
                 minLength={12}
                 autoComplete="new-password"
                 placeholder="Yeni şifre (en az 12 karakter)"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
-              <SubmitButton busy={busy}>Şifreyi belirle</SubmitButton>
+              <PasswordStrengthMeter password={newPassword} />
+              <SubmitButton busy={busy} className="mt-2">
+                Şifreyi belirle
+              </SubmitButton>
             </motion.form>
           )}
 
@@ -184,9 +261,14 @@ export function AdminLogin() {
                 <img src={qrDataUrl} alt="TOTP QR kodu" className="mx-auto h-40 w-40 rounded-lg border border-(--color-border) bg-white p-2" />
               )}
               {mfaSetupSecret && (
-                <p className="break-all rounded-lg bg-(--color-bg) px-3 py-2 text-center font-mono text-xs text-(--color-text-muted)">
-                  {mfaSetupSecret}
-                </p>
+                <div className="flex items-center justify-center gap-1.5">
+                  <p className="break-all rounded-lg bg-(--color-bg) px-3 py-2 text-center font-mono text-xs text-(--color-text-muted)">
+                    {mfaSetupSecret}
+                  </p>
+                  <Tooltip label="QR kodu tarayamıyorsanız bu kodu authenticator uygulamanıza manuel olarak girebilirsiniz.">
+                    <Info size={14} className="shrink-0 text-(--color-text-muted)" />
+                  </Tooltip>
+                </div>
               )}
 
               <div className="flex items-start gap-2.5 text-sm text-(--color-text-muted)">
@@ -195,16 +277,7 @@ export function AdminLogin() {
                 </span>
                 <p>Uygulamanın ürettiği 6 haneli kodu girin.</p>
               </div>
-              <IconField
-                icon={<KeyRound size={16} />}
-                type="text"
-                required
-                inputMode="numeric"
-                pattern="[0-9]{6}"
-                placeholder="6 haneli kod"
-                value={totpCode}
-                onChange={(e) => setTotpCode(e.target.value)}
-              />
+              <OtpInput value={totpCode} onChange={setTotpCode} onComplete={submitMfaSetup} autoFocus disabled={busy} />
               <SubmitButton busy={busy}>Doğrula</SubmitButton>
             </motion.form>
           )}
@@ -215,16 +288,7 @@ export function AdminLogin() {
                 <ShieldCheck size={16} />
                 <p className="text-sm">Authenticator uygulamanızdaki 6 haneli kodu girin.</p>
               </div>
-              <IconField
-                icon={<KeyRound size={16} />}
-                type="text"
-                required
-                inputMode="numeric"
-                pattern="[0-9]{6}"
-                placeholder="6 haneli kod"
-                value={totpCode}
-                onChange={(e) => setTotpCode(e.target.value)}
-              />
+              <OtpInput value={totpCode} onChange={setTotpCode} onComplete={submitMfaCode} autoFocus disabled={busy} />
               <SubmitButton busy={busy}>Doğrula</SubmitButton>
             </motion.form>
           )}

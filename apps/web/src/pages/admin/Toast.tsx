@@ -4,23 +4,34 @@ import { CheckCircle2, XCircle } from "lucide-react";
 
 type ToastVariant = "success" | "error";
 
+interface ToastAction {
+  label: string;
+  onClick: () => void;
+}
+
+interface ToastOptions {
+  action?: ToastAction;
+  durationMs?: number;
+}
+
 interface ToastItem {
   id: number;
   message: string;
   variant: ToastVariant;
+  action?: ToastAction;
 }
 
-const ToastContext = createContext<{ showToast: (message: string, variant?: ToastVariant) => void } | null>(null);
+const ToastContext = createContext<{ showToast: (message: string, variant?: ToastVariant, options?: ToastOptions) => void } | null>(null);
 
 let nextToastId = 1;
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
-  const showToast = useCallback((message: string, variant: ToastVariant = "success") => {
+  const showToast = useCallback((message: string, variant: ToastVariant = "success", options?: ToastOptions) => {
     const id = nextToastId++;
-    setToasts((prev) => [...prev, { id, message, variant }]);
-    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 3000);
+    setToasts((prev) => [...prev, { id, message, variant, action: options?.action }]);
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), options?.durationMs ?? 3000);
   }, []);
 
   return (
@@ -42,6 +53,17 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 <XCircle size={16} className="shrink-0 text-red-400" />
               )}
               <span className="text-(--color-text)">{toast.message}</span>
+              {toast.action && (
+                <button
+                  onClick={() => {
+                    toast.action?.onClick();
+                    setToasts((prev) => prev.filter((t) => t.id !== toast.id));
+                  }}
+                  className="ml-1 shrink-0 text-sm font-semibold text-(--color-accent) hover:underline"
+                >
+                  {toast.action.label}
+                </button>
+              )}
             </motion.div>
           ))}
         </AnimatePresence>
