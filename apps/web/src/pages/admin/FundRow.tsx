@@ -1,6 +1,6 @@
 import { useRef, useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Calendar, Check, ChevronDown, Pencil, Plus, Receipt, Trash2, TrendingDown, TrendingUp, X } from "lucide-react";
+import { AlertTriangle, Calendar, Check, ChevronDown, Pencil, Plus, Receipt, Trash2, TrendingDown, TrendingUp, X } from "lucide-react";
 import { useAuth } from "../../auth/AuthContext";
 import { apiFetch } from "../../auth/api";
 import { focusRing } from "../../styles/focusRing";
@@ -11,6 +11,8 @@ import { currencyFormatter, numberFormatter } from "./format";
 import { SubmitButton, iconButtonClass, plainInputClass } from "./formFields";
 
 const UNDO_DELAY_MS = 4000;
+const STALE_PRICE_DAYS = 7;
+const LIST_PREVIEW_COUNT = 5;
 
 interface FundSummary {
   fundCode: string;
@@ -44,6 +46,10 @@ function isValidDecimal(value: string): boolean {
   return !Number.isNaN(Number(value.replace(",", ".")));
 }
 
+function daysSince(dateStr: string): number {
+  return Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24));
+}
+
 export function FundRow({ fund, onChanged, profitLoss }: { fund: FundSummary; onChanged: () => void; profitLoss?: ProfitLoss | null }) {
   const { getIdToken } = useAuth();
   const { showToast } = useToast();
@@ -59,6 +65,8 @@ export function FundRow({ fund, onChanged, profitLoss }: { fund: FundSummary; on
   const [prices, setPrices] = useState<PriceItem[] | null>(null);
   const [transactions, setTransactions] = useState<TransactionItem[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [showAllPrices, setShowAllPrices] = useState(false);
+  const [showAllTxns, setShowAllTxns] = useState(false);
 
   const [priceDate, setPriceDate] = useState("");
   const [priceValue, setPriceValue] = useState("");
@@ -238,6 +246,23 @@ export function FundRow({ fund, onChanged, profitLoss }: { fund: FundSummary; on
     });
   }
 
+  const priceStaleDays = fund.latestPriceDate ? daysSince(fund.latestPriceDate) : null;
+  const isPriceStale = priceStaleDays !== null && priceStaleDays > STALE_PRICE_DAYS;
+
+  const visiblePrices = prices && !showAllPrices && prices.length > LIST_PREVIEW_COUNT ? prices.slice(-LIST_PREVIEW_COUNT) : prices;
+
+  const txnsWithBalance = transactions?.reduce<{ items: (TransactionItem & { balance: number })[]; balance: number }>(
+    (acc, t) => {
+      const balance = acc.balance + (t.type === "BUY" ? t.units : -t.units);
+      acc.items.push({ ...t, balance });
+      acc.balance = balance;
+      return acc;
+    },
+    { items: [], balance: 0 },
+  ).items;
+  const visibleTxns =
+    txnsWithBalance && !showAllTxns && txnsWithBalance.length > LIST_PREVIEW_COUNT ? txnsWithBalance.slice(-LIST_PREVIEW_COUNT) : txnsWithBalance;
+
   return (
     <li className="rounded-lg border border-(--color-border) bg-(--color-surface)">
       <div className="flex items-center gap-2 px-4 py-3">
@@ -288,6 +313,13 @@ export function FundRow({ fund, onChanged, profitLoss }: { fund: FundSummary; on
               <div className="font-semibold tabular-nums">{fund.currentValue !== null ? currencyFormatter.format(fund.currentValue) : "—"}</div>
               <div className="flex items-center justify-end gap-2">
                 <span className="text-xs text-(--color-text-muted) tabular-nums">{numberFormatter.format(fund.netUnits)} birim</span>
+                {isPriceStale && priceStaleDays !== null && (
+                  <Tooltip label={`Son fiyat ${priceStaleDays} gündür güncellenmedi (${fund.latestPriceDate})`}>
+                    <span className="flex items-center text-amber-500" aria-label="Fiyat güncel değil">
+                      <AlertTriangle size={12} />
+                    </span>
+                  </Tooltip>
+                )}
                 {profitLoss && (
                   <Tooltip
                     label={`Yatırılan tutara göre ${profitLoss.amount >= 0 ? "kâr" : "zarar"}: ${currencyFormatter.format(Math.abs(profitLoss.amount))}`}
@@ -331,15 +363,16 @@ export function FundRow({ fund, onChanged, profitLoss }: { fund: FundSummary; on
               {loadError && <p className="text-sm text-red-400 sm:col-span-2">{loadError}</p>}
 
               <section>
-                <h3 className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-(--color-text-muted)">
+                <h3 className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-(--color-text-muted)">
                   <Calendar size={13} /> Fiyat Geçmişi
                 </h3>
+                <p className="mb-3 text-xs text-(--color-text-muted)">Fonun günlük birim fiyatı — güncel değer hesabında kullanılır.</p>
 
                 {prices !== null && prices.length === 0 && <p className="mb-3 text-sm text-(--color-text-muted)">Henüz fiyat kaydı yok.</p>}
 
-                {prices !== null && prices.length > 0 && (
-                  <ul className="mb-4 flex flex-col gap-1.5 text-sm">
-                    {prices.map((p) => (
+                {visiblePrices !== null && visiblePrices.length > 0 && (
+                  <ul className="mb-2 flex flex-col gap-1.5 text-sm">
+                    {visiblePrices.map((p) => (
                       <li key={p.date} className="flex items-center justify-between gap-2 rounded-md px-1.5 py-1 hover:bg-(--color-bg)">
                         <span className="text-(--color-text-muted)">{p.date}</span>
                         <span className="flex items-center gap-2">
@@ -355,17 +388,33 @@ export function FundRow({ fund, onChanged, profitLoss }: { fund: FundSummary; on
                   </ul>
                 )}
 
+                {prices !== null && prices.length > LIST_PREVIEW_COUNT && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllPrices((v) => !v)}
+                    className={`mb-4 text-xs font-medium text-(--color-accent) hover:underline ${focusRing}`}
+                  >
+                    {showAllPrices ? "Daha az göster" : `Tümünü göster (${prices.length})`}
+                  </button>
+                )}
+
                 <form onSubmit={handleAddPrice} className="flex flex-wrap items-end gap-2">
-                  <input type="date" required value={priceDate} onChange={(e) => setPriceDate(e.target.value)} className={plainInputClass} />
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    required
-                    placeholder="Fiyat"
-                    value={priceValue}
-                    onChange={(e) => setPriceValue(e.target.value)}
-                    className={`${plainInputClass} w-24 ${isValidDecimal(priceValue) ? "" : "border-red-400 focus-visible:outline-red-400"}`}
-                  />
+                  <label className="flex flex-col gap-1 text-xs text-(--color-text-muted)">
+                    Tarih
+                    <input type="date" required value={priceDate} onChange={(e) => setPriceDate(e.target.value)} className={plainInputClass} />
+                  </label>
+                  <label className="flex flex-col gap-1 text-xs text-(--color-text-muted)">
+                    Fiyat
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      required
+                      placeholder="0,00"
+                      value={priceValue}
+                      onChange={(e) => setPriceValue(e.target.value)}
+                      className={`${plainInputClass} w-24 ${isValidDecimal(priceValue) ? "" : "border-red-400 focus-visible:outline-red-400"}`}
+                    />
+                  </label>
                   <Tooltip label="Fiyat ekle">
                     <SubmitButton busy={priceBusy} className="w-auto px-3">
                       <Plus size={14} />
@@ -375,15 +424,16 @@ export function FundRow({ fund, onChanged, profitLoss }: { fund: FundSummary; on
               </section>
 
               <section>
-                <h3 className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-(--color-text-muted)">
+                <h3 className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-(--color-text-muted)">
                   <Receipt size={13} /> İşlemler
                 </h3>
+                <p className="mb-3 text-xs text-(--color-text-muted)">Alış/satış kayıtları — net birim sayınızı belirler.</p>
 
                 {transactions !== null && transactions.length === 0 && <p className="mb-3 text-sm text-(--color-text-muted)">Henüz işlem yok.</p>}
 
-                {transactions !== null && transactions.length > 0 && (
-                  <ul className="mb-4 flex flex-col gap-1.5 text-sm">
-                    {transactions.map((t) => (
+                {visibleTxns !== null && visibleTxns !== undefined && visibleTxns.length > 0 && (
+                  <ul className="mb-2 flex flex-col gap-1.5 text-sm">
+                    {visibleTxns.map((t) => (
                       <li key={t.txnId} className="flex items-center justify-between gap-2 rounded-md px-1.5 py-1 hover:bg-(--color-bg)">
                         <span className="flex items-center gap-1.5 text-(--color-text-muted)">
                           {t.type === "BUY" ? (
@@ -397,6 +447,9 @@ export function FundRow({ fund, onChanged, profitLoss }: { fund: FundSummary; on
                           <span className="font-medium">
                             {numberFormatter.format(t.units)} × {numberFormatter.format(t.price)}
                           </span>
+                          <Tooltip label="İşlem sonrası birim bakiyesi">
+                            <span className="text-[11px] text-(--color-text-muted)">→ {numberFormatter.format(t.balance)}</span>
+                          </Tooltip>
                           <Tooltip label="İşlemi sil">
                             <button onClick={() => handleDeleteTransaction(t.txnId)} className={iconButtonClass} aria-label="İşlemi sil">
                               <Trash2 size={12} />
@@ -408,30 +461,52 @@ export function FundRow({ fund, onChanged, profitLoss }: { fund: FundSummary; on
                   </ul>
                 )}
 
+                {transactions !== null && transactions.length > LIST_PREVIEW_COUNT && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllTxns((v) => !v)}
+                    className={`mb-4 text-xs font-medium text-(--color-accent) hover:underline ${focusRing}`}
+                  >
+                    {showAllTxns ? "Daha az göster" : `Tümünü göster (${transactions.length})`}
+                  </button>
+                )}
+
                 <form onSubmit={handleAddTransaction} className="flex flex-wrap items-end gap-2">
-                  <input type="date" required value={txnDate} onChange={(e) => setTxnDate(e.target.value)} className={plainInputClass} />
-                  <select value={txnType} onChange={(e) => setTxnType(e.target.value as "BUY" | "SELL")} className={plainInputClass}>
-                    <option value="BUY">Alış</option>
-                    <option value="SELL">Satış</option>
-                  </select>
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    required
-                    placeholder="Adet"
-                    value={txnUnits}
-                    onChange={(e) => setTxnUnits(e.target.value)}
-                    className={`${plainInputClass} w-20 ${isValidDecimal(txnUnits) ? "" : "border-red-400 focus-visible:outline-red-400"}`}
-                  />
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    required
-                    placeholder="Fiyat"
-                    value={txnPrice}
-                    onChange={(e) => setTxnPrice(e.target.value)}
-                    className={`${plainInputClass} w-20 ${isValidDecimal(txnPrice) ? "" : "border-red-400 focus-visible:outline-red-400"}`}
-                  />
+                  <label className="flex flex-col gap-1 text-xs text-(--color-text-muted)">
+                    Tarih
+                    <input type="date" required value={txnDate} onChange={(e) => setTxnDate(e.target.value)} className={plainInputClass} />
+                  </label>
+                  <label className="flex flex-col gap-1 text-xs text-(--color-text-muted)">
+                    Tür
+                    <select value={txnType} onChange={(e) => setTxnType(e.target.value as "BUY" | "SELL")} className={plainInputClass}>
+                      <option value="BUY">Alış</option>
+                      <option value="SELL">Satış</option>
+                    </select>
+                  </label>
+                  <label className="flex flex-col gap-1 text-xs text-(--color-text-muted)">
+                    Adet
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      required
+                      placeholder="10"
+                      value={txnUnits}
+                      onChange={(e) => setTxnUnits(e.target.value)}
+                      className={`${plainInputClass} w-20 ${isValidDecimal(txnUnits) ? "" : "border-red-400 focus-visible:outline-red-400"}`}
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1 text-xs text-(--color-text-muted)">
+                    Fiyat
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      required
+                      placeholder="0,00"
+                      value={txnPrice}
+                      onChange={(e) => setTxnPrice(e.target.value)}
+                      className={`${plainInputClass} w-20 ${isValidDecimal(txnPrice) ? "" : "border-red-400 focus-visible:outline-red-400"}`}
+                    />
+                  </label>
                   <Tooltip label="İşlem ekle">
                     <SubmitButton busy={txnBusy} className="w-auto px-3">
                       <Plus size={14} />

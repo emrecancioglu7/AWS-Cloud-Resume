@@ -1,9 +1,22 @@
-import { cloneElement, useId, useState, type ReactElement } from "react";
+import { cloneElement, useEffect, useId, useRef, useState, type ReactElement } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+
+const TOUCH_PREVIEW_MS = 1500;
 
 export function Tooltip({ label, children, className = "relative inline-flex" }: { label: string; children: ReactElement; className?: string }) {
   const [visible, setVisible] = useState(false);
   const id = useId();
+  const touchHideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (touchHideTimeout.current) clearTimeout(touchHideTimeout.current);
+  }, []);
+
+  function previewOnTouch() {
+    setVisible(true);
+    if (touchHideTimeout.current) clearTimeout(touchHideTimeout.current);
+    touchHideTimeout.current = setTimeout(() => setVisible(false), TOUCH_PREVIEW_MS);
+  }
 
   const trigger = cloneElement(children, { "aria-describedby": id } as Record<string, unknown>);
 
@@ -14,6 +27,7 @@ export function Tooltip({ label, children, className = "relative inline-flex" }:
       onMouseLeave={() => setVisible(false)}
       onFocus={() => setVisible(true)}
       onBlur={() => setVisible(false)}
+      onTouchStart={previewOnTouch}
     >
       {trigger}
       <AnimatePresence>
