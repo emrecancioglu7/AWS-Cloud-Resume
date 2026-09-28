@@ -22,4 +22,4 @@ export function render(url: string) {
   );
 }
 
-export { buildHead, buildLlmsFullTxt, buildLlmsTxt, buildSitemap, pagePath } from "./seo/site";
+export { buildHead, buildLlmsFullTxt, buildLlmsTxt, buildSitemap, pageFacts, pagePath } from "./seo/site";

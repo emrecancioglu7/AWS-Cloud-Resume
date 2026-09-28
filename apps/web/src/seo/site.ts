@@ -21,6 +21,19 @@ export function pageUrl(lang: Language) {
   return `${SITE_URL}${pagePath(lang)}`;
 }
 
+// What scripts/check-prerender.mjs expects to find in each prerendered page — derived from the
+// content files so the check follows the resume instead of hardcoding it.
+export function pageFacts(lang: Language) {
+  const c = content[lang];
+  return {
+    lang,
+    url: pageUrl(lang),
+    alternates: languages.map(pageUrl),
+    requiredText: [c.profile.name, c.experience[0].title, c.experience[c.experience.length - 1].title, c.education[0].title],
+    resumePdfUrl: c.profile.resumePdfUrl,
+  };
+}
+
 function escapeAttr(value: string) {
   return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
