@@ -7,7 +7,7 @@ export const profile = {
   longBio:
     "2 kişilik bir mühendislik ekibini yönetiyor, 10'dan fazla fonksiyon/departmanla koordinasyon sağlıyor ve şirket çapındaki AI Elçileri programına liderlik ediyorum. Kestirimci bakım, bilgisayarlı görü tabanlı güvenlik sistemleri (uygulandığı alanlarda 4 yıl kesintisiz sıfır iş kazası), GenAI destekli otomasyon ve enerji & sürdürülebilirlik analitiği ile ölçülebilir etki sağlıyorum. PLC, SCADA ve endüstriyel protokoller (OPC UA, MQTT, Profinet) konusundaki derin uygulamalı uzmanlığımı güçlü yazılım/bulut ve liderlik yetkinlikleriyle (Node.js, React, Azure/AWS, Kubernetes) dengeliyorum. İnci Holding grup şirketleri çapında çoklu birincilik ve bir İnovasyon Özel Ödülü kazandım; uygulamalı makine öğrenmesi ve endüstriyel otomasyon alanında 4 bilimsel yayınım bulunuyor.",
   birthday: "1995-08-10",
-  website: "www.emrecancioglu.com",
+  website: "emrecancioglu.com",
   phone: "+90 536 702 43 66",
   city: "İzmir/Türkiye",
   degree: "Yüksek Lisans",

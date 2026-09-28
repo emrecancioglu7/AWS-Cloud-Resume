@@ -7,7 +7,7 @@ export const profile = {
   longBio:
     "Managing a 2-person engineering team, coordinating across 10+ cross-functional departments, and leading the company-wide AI Ambassador program. Delivers measurable impact through predictive maintenance, computer-vision-based safety systems (contributing to 4 consecutive years of zero workplace accidents in the areas where they were deployed), GenAI-powered automation, and energy & sustainability analytics. Deep hands-on expertise with PLC, SCADA, and industrial protocols (OPC UA, MQTT, Profinet), balanced with strong software/cloud and leadership capability (Node.js, React, Azure/AWS, Kubernetes). Recognized with multiple 1st-place finishes and an Innovation Special Award across İnci Holding's group companies, and the author of 4 scientific publications in applied machine learning and industrial automation.",
   birthday: "1995-08-10",
-  website: "www.emrecancioglu.com",
+  website: "emrecancioglu.com",
   phone: "+90 536 702 43 66",
   city: "İzmir/Türkiye",
   degree: "Master",

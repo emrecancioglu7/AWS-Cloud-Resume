@@ -6,7 +6,7 @@ import { buildHead, buildJsonLd, buildLlmsFullTxt, buildLlmsTxt, buildSitemap, p
 
 describe("seo/site", () => {
   it("never points at the www host, which has no DNS record", () => {
-    const everything = [buildHead("en"), buildHead("tr"), buildSitemap(), buildLlmsTxt(), buildLlmsFullTxt()].join("\n");
+    const everything = [buildHead("en"), buildHead("tr"), buildSitemap(), buildLlmsTxt(), buildLlmsFullTxt(), JSON.stringify(en), JSON.stringify(tr)].join("\n");
     expect(everything).not.toContain("www.emrecancioglu.com");
   });
 
