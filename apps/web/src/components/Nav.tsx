@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { FileText, Home, Languages, Layers, Menu, Moon, Sun, User, X } from "lucide-react";
 import { uiText } from "../i18n/ui";
-import { useLanguage } from "../i18n/LanguageContext";
+import { langPath, useLanguage } from "../i18n/LanguageContext";
 import { useTheme } from "../theme/ThemeContext";
 import { useScrollSpy } from "../hooks/useScrollSpy";
 import { focusRingInset } from "../styles/focusRing";
@@ -37,7 +37,8 @@ export function Nav() {
   const { theme, toggleTheme } = useTheme();
   const { lang, toggleLang } = useLanguage();
   const ui = uiText[lang];
-  const isHome = pathname === "/";
+  const homePath = langPath(lang);
+  const isHome = pathname === homePath;
   const activeId = useScrollSpy(sectionIds);
   const labelClass = getLabelClass(expanded);
 
@@ -82,7 +83,7 @@ export function Nav() {
         {content}
       </a>
     ) : (
-      <Link key={link.href} to={`/${link.href}`} className={className} onClick={() => setOpen(false)}>
+      <Link key={link.href} to={{ pathname: homePath, hash: link.href }} className={className} onClick={() => setOpen(false)}>
         {content}
       </Link>
     );
@@ -105,7 +106,7 @@ export function Nav() {
         } ${open ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div>
-          <Link to="/" className={`mb-8 flex items-center gap-3 rounded-lg px-0.5 ${focusRingInset}`}>
+          <Link to={homePath} className={`mb-8 flex items-center gap-3 rounded-lg px-0.5 ${focusRingInset}`}>
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-(--color-accent-soft) text-sm font-bold text-(--color-accent)">
               EÇ
             </span>

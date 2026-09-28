@@ -24,7 +24,8 @@ export function CountUpMetric({ value }: { value: string }) {
   const prefersReducedMotion = useReducedMotion();
 
   const { prefix, target, decimals, separator, suffix } = parseMetric(value);
-  const [display, setDisplay] = useState(prefersReducedMotion ? target : 0);
+  // Prerendered HTML (no window) shows the real value so crawlers never index "0%".
+  const [display, setDisplay] = useState(typeof window === "undefined" || prefersReducedMotion ? target : 0);
 
   useEffect(() => {
     if (!isInView || prefersReducedMotion) return;

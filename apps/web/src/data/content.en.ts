@@ -17,8 +17,21 @@ export const profile = {
   social: {
     linkedin: "https://www.linkedin.com/in/emrecancioglu/",
     github: "https://github.com/emrecancioglu7",
+    orcid: "https://orcid.org/0000-0002-9918-4668",
   },
   resumePdfUrl: "/pdf/Resume_EmreCANCIOGLU.pdf",
+} as const;
+
+export const seo = {
+  title: "Emre Çancıoğlu | Digitalization & AI Supervisor · OT & Industrial AI",
+  description:
+    "Digitalization & AI Supervisor with 9+ years in industrial automation: OT digitalization, predictive maintenance, computer-vision safety and GenAI across 3 plants.",
+  locale: "en_US",
+  ogImage: "/og/og-en.png",
+  ogImageAlt: "Emre Çancıoğlu — Digitalization & AI Supervisor, Industrial Automation",
+  employer: "İnci GS Yuasa",
+  university: "İzmir Katip Çelebi University",
+  country: "Türkiye",
 } as const;
 
 export const highlights = [

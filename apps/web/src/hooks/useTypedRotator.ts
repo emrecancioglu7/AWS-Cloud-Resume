@@ -5,7 +5,8 @@ const DELETE_SPEED = 30;
 const HOLD_MS = 1500;
 
 export function useTypedRotator(items: readonly string[]) {
-  const [text, setText] = useState("");
+  // Prerendered HTML (no window) starts with the first role so it's in the crawlable markup.
+  const [text, setText] = useState(() => (typeof window === "undefined" ? (items[0] ?? "") : ""));
   const [itemIndex, setItemIndex] = useState(0);
   const [deleting, setDeleting] = useState(false);
 

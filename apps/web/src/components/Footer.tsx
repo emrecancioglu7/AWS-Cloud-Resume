@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import { GithubIcon, LinkedinIcon } from "./BrandIcons";
 import { useContent } from "../data/useContent";
 import { fetchVisitorCount } from "../lib/visitorCounter";
+import { LAST_UPDATED } from "../data/site";
 import { focusRing } from "../styles/focusRing";
 
 export function Footer() {
-  const { profile, ui } = useContent();
+  const { profile, ui, lang } = useContent();
+  const lastUpdated = new Intl.DateTimeFormat(lang === "tr" ? "tr-TR" : "en-US", { month: "long", year: "numeric", timeZone: "UTC" }).format(
+    new Date(LAST_UPDATED),
+  );
   const [views, setViews] = useState<string>("");
 
   useEffect(() => {
@@ -40,11 +44,14 @@ export function Footer() {
         </a>
       </div>
 
-      <p className="mt-6 text-xs text-(--color-text-muted)">{views}</p>
+      <p className="mt-6 text-xs text-(--color-text-muted)">
+        {ui.footer.lastUpdated}: <time dateTime={LAST_UPDATED}>{lastUpdated}</time>
+      </p>
+      <p className="mt-1 text-xs text-(--color-text-muted)">{views}</p>
       <p className="mt-1 text-xs text-(--color-text-muted)">{ui.footer.copyright}</p>
       <p className="mt-1 text-xs text-(--color-text-muted)">
         {ui.footer.designedBy}{" "}
-        <a href={profile.social.linkedin} target="_blank" rel="noopener noreferrer" className="text-(--color-accent) hover:underline">
+        <a href={profile.social.linkedin} target="_blank" rel="noopener noreferrer" className="text-(--color-accent) underline underline-offset-2">
           {profile.name}
         </a>{" "}
         | {ui.footer.hostedOn}

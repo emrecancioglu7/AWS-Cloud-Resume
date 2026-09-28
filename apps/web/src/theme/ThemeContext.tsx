@@ -9,6 +9,9 @@ const ThemeContext = createContext<{ theme: Theme; toggleTheme: (origin?: Origin
 const STORAGE_KEY = "theme";
 
 function getInitialTheme(): Theme {
+  // Prerendering (entry-server.tsx) has no window — index.html's inline script applies the
+  // real theme class before first paint anyway.
+  if (typeof window === "undefined") return "dark";
   const stored = window.localStorage.getItem(STORAGE_KEY);
   if (stored === "dark" || stored === "light") return stored;
   return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";

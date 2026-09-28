@@ -4,28 +4,35 @@
     <meta charset="UTF-8" />
     <script>
       (function () {
-        var stored = localStorage.getItem("theme");
+        // A returning visitor who explicitly picked Turkish lands on "/" → send them to "/tr"
+        // before first paint. Crawlers have no stored choice, so they always get "/" as-is.
+        // "/tr/" (trailing slash) isn't an S3 object, so normalise it to "/tr" too.
+        try {
+          var path = location.pathname;
+          if (path === "/tr/" || (path === "/" && localStorage.getItem("lang") === "tr")) {
+            location.replace("/tr" + location.search + location.hash);
+          }
+        } catch (e) {}
+        var stored = null;
+        try {
+          stored = localStorage.getItem("theme");
+        } catch (e) {}
         var theme = stored === "dark" || stored === "light" ? stored : window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
         if (theme === "light") document.documentElement.classList.add("light");
       })();
     </script>
 
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Emre Çancıoğlu — Software Developer & Digital Transformation Expert. Resume, skills, and professional experience." />
-    <link rel="canonical" href="https://www.emrecancioglu.com/" />
-    <title>Emre Çancıoğlu — Personal Website</title>
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0a0b0d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)" />
 
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Emre Çancıoğlu — Personal Website" />
-    <meta property="og:description" content="Software Developer & Digital Transformation Expert. Resume, skills, and professional experience." />
-    <meta property="og:url" content="https://www.emrecancioglu.com/" />
-    <meta property="og:image" content="https://www.emrecancioglu.com/img/profile-img.jpg" />
-
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Emre Çancıoğlu — Personal Website" />
-    <meta name="twitter:description" content="Software Developer & Digital Transformation Expert. Resume, skills, and professional experience." />
-    <meta name="twitter:image" content="https://www.emrecancioglu.com/img/profile-img.jpg" />
+    <!-- Per-language title, description, canonical, hreflang, Open Graph and JSON-LD are
+         generated from src/data/content.*.ts by src/seo/site.ts — injected here at build time
+         (scripts/prerender.mjs) and in dev (vite.config.ts). -->
+    <!--app-head-->
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -33,22 +40,9 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Emre Çancıoğlu",
-        "jobTitle": "Software Developer | Digital Transformation Expert",
-        "url": "https://www.emrecancioglu.com/",
-        "image": "https://www.emrecancioglu.com/img/profile-img.jpg",
-        "email": "mailto:emrecancioglu7@gmail.com",
-        "sameAs": ["https://www.linkedin.com/in/emrecancioglu/", "https://github.com/emrecancioglu7"]
-      }
-    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!--app-html--></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

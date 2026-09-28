@@ -17,8 +17,21 @@ export const profile = {
   social: {
     linkedin: "https://www.linkedin.com/in/emrecancioglu/",
     github: "https://github.com/emrecancioglu7",
+    orcid: "https://orcid.org/0000-0002-9918-4668",
   },
   resumePdfUrl: "/pdf/Resume_EmreCANCIOGLU_TR.pdf",
+} as const;
+
+export const seo = {
+  title: "Emre Çancıoğlu | Dijitalleşme ve Yapay Zeka Ekip Lideri",
+  description:
+    "Endüstriyel otomasyonda 9+ yıl: 3 üretim tesisinde OT dijitalleşmesi, kestirimci bakım, bilgisayarlı görü ile iş güvenliği ve GenAI otomasyonu yöneten ekip lideri.",
+  locale: "tr_TR",
+  ogImage: "/og/og-tr.png",
+  ogImageAlt: "Emre Çancıoğlu — Dijitalleşme ve Yapay Zeka Ekip Lideri, Endüstriyel Otomasyon",
+  employer: "İnci GS Yuasa",
+  university: "İzmir Katip Çelebi Üniversitesi",
+  country: "Türkiye",
 } as const;
 
 export const highlights = [
