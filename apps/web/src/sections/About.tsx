@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useContent } from "../data/useContent";
 import { Reveal } from "../components/Reveal";
+import { CountUpMetric } from "../components/AnimatedMetrics";
 import { SectionHeading } from "../components/SectionHeading";
 import { focusRing } from "../styles/focusRing";
 
@@ -14,7 +15,7 @@ function calculateAge(birthDate: string) {
 }
 
 export function About() {
-  const { profile, ui, lang } = useContent();
+  const { profile, highlights, ui, lang } = useContent();
   const age = useMemo(() => calculateAge(profile.birthday), [profile.birthday]);
   const birthdayDisplay = useMemo(
     () => new Intl.DateTimeFormat(lang === "tr" ? "tr-TR" : "en-US", { day: "numeric", month: "long", year: "numeric" }).format(new Date(profile.birthday)),
@@ -74,6 +75,19 @@ export function About() {
           <p className="text-(--color-text-muted)">{profile.longBio}</p>
         </Reveal>
       </div>
+
+      <Reveal delay={0.2}>
+        <ul className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          {highlights.map((h) => (
+            <li key={h.label} className="rounded-xl border border-(--color-border) px-4 py-5 text-center">
+              <span className="block font-heading text-3xl">
+                <CountUpMetric value={h.metric} />
+              </span>
+              <span className="mt-1 block text-sm text-(--color-text-muted)">{h.label}</span>
+            </li>
+          ))}
+        </ul>
+      </Reveal>
     </section>
   );
 }

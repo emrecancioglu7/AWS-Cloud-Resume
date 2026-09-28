@@ -16,7 +16,7 @@ function ResumeTitle({ children }: { children: ReactNode }) {
 }
 
 export function Resume() {
-  const { awards, certifications, education, experience, publications, ui } = useContent();
+  const { awards, awardsNote, certifications, education, experience, publications, ui } = useContent();
 
   return (
     <section id="resume" className="mx-auto max-w-6xl px-6 py-24">
@@ -25,6 +25,7 @@ export function Resume() {
       <div className="grid gap-12 md:grid-cols-2">
         <div>
           <ResumeTitle>{ui.resume.honorsAwards}</ResumeTitle>
+          <p className="mb-6 text-sm italic text-(--color-text-muted)">{awardsNote}</p>
           <Timeline>
             {awards.map((a, i) => (
               <TimelineItem key={i}>
@@ -47,14 +48,18 @@ export function Resume() {
             <Timeline>
               {publications.map((p, i) => (
                 <TimelineItem key={i}>
-                  <a
-                    href={p.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`inline-flex items-center gap-1 rounded font-semibold underline decoration-(--color-accent) underline-offset-2 ${focusRing}`}
-                  >
-                    {p.title} <ExternalLink size={14} />
-                  </a>
+                  {"url" in p ? (
+                    <a
+                      href={p.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center gap-1 rounded font-semibold underline decoration-(--color-accent) underline-offset-2 ${focusRing}`}
+                    >
+                      {p.title} <ExternalLink size={14} />
+                    </a>
+                  ) : (
+                    <h4 className="font-semibold">{p.title}</h4>
+                  )}
                   <p className="text-sm text-(--color-accent)">{p.date}</p>
                   <p className="text-sm italic text-(--color-text-muted)">{p.place}</p>
                   <p className="text-sm text-(--color-text-muted)">{p.role}</p>
@@ -73,10 +78,8 @@ export function Resume() {
               {certifications.map((c, i) => (
                 <TimelineItem key={i}>
                   <h4 className="font-semibold">{c.title}</h4>
-                  <p className="text-sm text-(--color-text-muted)">
-                    <strong className="text-(--color-text)">{ui.resume.field}: </strong>
-                    {c.field}
-                  </p>
+                  <p className="text-sm text-(--color-accent)">{c.date}</p>
+                  <p className="text-sm italic text-(--color-text-muted)">{c.issuer}</p>
                 </TimelineItem>
               ))}
             </Timeline>
@@ -110,6 +113,10 @@ export function Resume() {
                   <h4 className="font-semibold">{ed.title}</h4>
                   <p className="text-sm text-(--color-accent)">{ed.date}</p>
                   <p className="mb-2 text-sm italic text-(--color-text-muted)">{ed.school}</p>
+                  <p className="text-sm text-(--color-text-muted)">
+                    <strong className="text-(--color-text)">{ui.resume.gpa}: </strong>
+                    {ed.gpa}
+                  </p>
                   <p className="text-sm text-(--color-text-muted)">
                     <strong className="text-(--color-text)">{ui.resume.coursework}: </strong>
                     {ed.coursework}

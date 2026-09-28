@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { AnimatedMetrics } from "./AnimatedMetrics";
+import { AnimatedMetrics, CountUpMetric } from "./AnimatedMetrics";
 
 // Forces the count-up to display its target value immediately instead of animating over
 // rAF frames, so assertions don't need to wait on timing.
@@ -49,5 +49,28 @@ describe("AnimatedMetrics", () => {
     render(<AnimatedMetrics text="Cut costs by $200K and grew revenue 3x" />);
     expect(screen.getByText("$200K")).toBeInTheDocument();
     expect(screen.getByText("3x")).toBeInTheDocument();
+  });
+
+  it("keeps the source's decimal places instead of rounding", () => {
+    render(<AnimatedMetrics text="Reached 25.76% coverage" />);
+    expect(screen.getByText("25.76%")).toBeInTheDocument();
+  });
+
+  it("handles Turkish comma decimals and a trailing comma as punctuation", () => {
+    render(<AnimatedMetrics text="kapsamı %25,76 oldu, verimliliği %19, güvenilirliği %14 artırdı" />);
+    expect(screen.getByText("%25,76")).toBeInTheDocument();
+    expect(screen.getByText("%19")).toBeInTheDocument();
+    expect(screen.getByText("%14")).toBeInTheDocument();
+  });
+
+  it("counts up plain and plus-suffixed numbers via CountUpMetric", () => {
+    render(
+      <>
+        <CountUpMetric value="9+" />
+        <CountUpMetric value="3" />
+      </>,
+    );
+    expect(screen.getByText("9+")).toBeInTheDocument();
+    expect(screen.getByText("3")).toBeInTheDocument();
   });
 });

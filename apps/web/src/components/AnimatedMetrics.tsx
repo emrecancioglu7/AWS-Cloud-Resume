@@ -1,23 +1,29 @@
 import { useEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "framer-motion";
 
-// Matches both "19%" (English) and "%19" (Turkish percent-first convention), plus "$200k" / "3x".
-const METRIC_PATTERN = /(?<![\w.])(?:%\d+(?:\.\d+)?(?!\w)|\$?\d+(?:\.\d+)?(?:%|x|K|k)(?!\w))/g;
+// Matches both "19%" (English) and "%19" / "%25,76" (Turkish percent-first, comma-decimal convention), plus "$200k" / "3x".
+const METRIC_PATTERN = /(?<![\w.])(?:%\d+(?:[.,]\d+)?(?!\w)|\$?\d+(?:\.\d+)?(?:%|x|K|k)(?!\w))/g;
+
+function parseNumber(raw: string) {
+  const separator = raw.includes(",") ? "," : ".";
+  const decimals = raw.split(separator)[1]?.length ?? 0;
+  return { target: parseFloat(raw.replace(",", ".")), decimals, separator };
+}
 
 function parseMetric(value: string) {
   if (value.startsWith("%")) {
-    return { prefix: "%", target: parseFloat(value.slice(1)), suffix: "" };
+    return { prefix: "%", ...parseNumber(value.slice(1)), suffix: "" };
   }
-  const match = value.match(/^(\$)?(\d+(?:\.\d+)?)(%|x|K|k)?$/);
-  return { prefix: match?.[1] ?? "", target: match ? parseFloat(match[2]) : 0, suffix: match?.[3] ?? "" };
+  const match = value.match(/^(\$)?(\d+(?:\.\d+)?)(%|x|K|k|\+)?$/);
+  return { prefix: match?.[1] ?? "", ...parseNumber(match?.[2] ?? "0"), suffix: match?.[3] ?? "" };
 }
 
-function CountUpMetric({ value }: { value: string }) {
+export function CountUpMetric({ value }: { value: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-10% 0px" });
   const prefersReducedMotion = useReducedMotion();
 
-  const { prefix, target, suffix } = parseMetric(value);
+  const { prefix, target, decimals, separator, suffix } = parseMetric(value);
   const [display, setDisplay] = useState(prefersReducedMotion ? target : 0);
 
   useEffect(() => {
@@ -29,7 +35,7 @@ function CountUpMetric({ value }: { value: string }) {
     const tick = (now: number) => {
       const progress = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplay(Math.round(target * eased * 10) / 10);
+      setDisplay(target * eased);
       if (progress < 1) frame = requestAnimationFrame(tick);
     };
 
@@ -37,7 +43,7 @@ function CountUpMetric({ value }: { value: string }) {
     return () => cancelAnimationFrame(frame);
   }, [isInView, target, prefersReducedMotion]);
 
-  const formatted = Number.isInteger(target) ? Math.round(display) : display.toFixed(1);
+  const formatted = display.toFixed(decimals).replace(".", separator);
 
   return (
     <strong ref={ref} className="font-semibold text-(--color-accent) tabular-nums">
