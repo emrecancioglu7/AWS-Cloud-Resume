@@ -72,6 +72,74 @@ function resumeHtml(c, page) {
   </body></html>`;
 }
 
+// Share card for /github.html (LinkedIn wrapper around the GitHub profile, whose own preview is
+// always just the avatar) and the social-preview image uploaded in the AWS-Cloud-Resume repo's
+// GitHub settings (1280×640, GitHub's recommended size).
+const githubLogo = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#ececea" d="${
+  (await (await fetch("https://cdn.jsdelivr.net/npm/simple-icons@13/icons/github.svg")).text()).match(/ d="([^"]+)"/)[1]
+}"/></svg>`;
+const cardCss = `
+    * { margin: 0; box-sizing: border-box; }
+    body { background: #0a0b0d; color: #ececea; font-family: Inter, sans-serif; overflow: hidden; position: relative; }
+    .glow { position: absolute; inset: 0; background: radial-gradient(circle at 82% 30%, rgba(52,211,153,0.2), transparent 48%); }
+    .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 10px; background: #34d399; }
+    .tag { display: inline-flex; align-items: center; gap: 10px; padding: 8px 18px; border-radius: 999px; background: rgba(52,211,153,0.14); color: #34d399; font-weight: 600; font-size: 20px; letter-spacing: 2px; }
+    h1 { font-family: "Space Grotesk", sans-serif; font-weight: 700; line-height: 1.02; }
+    .sub { color: #9a9a97; }
+    .chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .chip { padding: 9px 16px; border-radius: 12px; background: #131519; border: 1px solid #262a30; font-size: 19px; font-weight: 500; }
+    .url { position: absolute; bottom: 44px; font-size: 22px; color: #9a9a97; }`;
+
+function githubHtml(c) {
+  const chips = ["OPC UA", "MQTT", "Node.js", "TypeScript", "Python", "React", "AWS", "Terraform", "Kubernetes", "ML / AI"]
+    .map((x) => `<span class="chip">${x}</span>`).join("");
+  return `<!doctype html><html><head><meta charset="utf-8" />${fonts}<style>${cardCss}
+    body { width: 1200px; height: 630px; }
+    .logo { position: absolute; right: 90px; top: 120px; width: 300px; height: 300px; opacity: .95; }
+    .text { position: absolute; left: 88px; top: 110px; width: 700px; }
+    h1 { margin-top: 26px; font-size: 76px; }
+    .name { margin-top: 16px; font-size: 32px; font-weight: 600; }
+    .sub { margin-top: 8px; font-size: 22px; }
+    .chips { margin-top: 36px; }
+    .url { left: 88px; }
+  </style></head><body><div class="glow"></div><div class="bar"></div>
+    <div class="text"><span class="tag">GITHUB</span><h1>@emrecancioglu7</h1>
+      <div class="name">${escape(c.profile.name)}</div>
+      <div class="sub">Industrial data, cloud &amp; automation — code and projects</div>
+      <div class="chips">${chips}</div></div>
+    <div class="logo">${githubLogo}</div>
+    <div class="url">github.com/emrecancioglu7</div>
+  </body></html>`;
+}
+
+function repoHtml() {
+  const box = (title, sub) => `<div class="box"><b>${title}</b><span>${sub}</span></div>`;
+  return `<!doctype html><html><head><meta charset="utf-8" />${fonts}<style>${cardCss}
+    body { width: 1280px; height: 640px; }
+    .text { position: absolute; left: 88px; top: 70px; right: 80px; }
+    h1 { margin-top: 22px; font-size: 80px; }
+    .sub { margin-top: 12px; font-size: 26px; }
+    .flow { position: absolute; left: 88px; right: 80px; top: 320px; display: flex; align-items: stretch; gap: 12px; }
+    .box { flex: 1; padding: 20px 16px; justify-content: center; border-radius: 16px; background: #131519; border: 1px solid #262a30; display: flex; flex-direction: column; gap: 6px; }
+    .box b { font-size: 21px; white-space: nowrap; } .box span { font-size: 15px; color: #9a9a97; white-space: nowrap; }
+    .arrow { color: #34d399; font-size: 28px; font-weight: 700; align-self: center; }
+    .chips { position: absolute; left: 88px; top: 452px; }
+    .url { left: 88px; }
+  </style></head><body><div class="glow"></div><div class="bar"></div>
+    <div class="text"><span class="tag">OPEN SOURCE · AWS SERVERLESS</span><h1>AWS Cloud Resume</h1>
+      <div class="sub">Prerendered bilingual resume site + private admin panel, fully on AWS</div></div>
+    <div class="flow">
+      ${box("React + TS", "Vite · prerendered")}<span class="arrow">→</span>
+      ${box("S3 + CloudFront", "hosting · CDN")}<span class="arrow">→</span>
+      ${box("API Gateway", "Cognito JWT")}<span class="arrow">→</span>
+      ${box("Lambda", "Node 20 · TS")}<span class="arrow">→</span>
+      ${box("DynamoDB", "single-table")}
+    </div>
+    <div class="chips"><span class="chip">Terraform</span><span class="chip">GitHub Actions CI/CD</span><span class="chip">Cognito + TOTP MFA</span><span class="chip">S3 event pipeline</span><span class="chip">Vitest</span></div>
+    <div class="url">github.com/emrecancioglu7/AWS-Cloud-Resume</div>
+  </body></html>`;
+}
+
 const iconHtml = `<!doctype html><html><head><meta charset="utf-8" />${fonts}<style>
   * { margin: 0; }
   body { width: 512px; height: 512px; background: #0a0b0d; display: flex; align-items: center; justify-content: center; overflow: hidden; }
@@ -110,6 +178,10 @@ execFileSync("sips", ["-s", "format", "png", "-Z", "1600", join(publicDir, "pdf/
 const page = `data:image/png;base64,${(await readFile(pagePng)).toString("base64")}`;
 await screenshot(resumeHtml(en, page), 1200, 630, join(publicDir, "og/og-resume.png"));
 await rm(pageDir, { recursive: true, force: true });
+
+await screenshot(githubHtml(en), 1200, 630, join(publicDir, "og/og-github.png"));
+// Not served by the site — upload it by hand: repo Settings → General → Social preview.
+await screenshot(repoHtml(), 1280, 640, fileURLToPath(new URL("../../../.github/social-preview.png", import.meta.url)));
 
 const icon512 = join(publicDir, "icons/icon-512.png");
 await screenshot(iconHtml, 512, 512, icon512);
