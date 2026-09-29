@@ -4,6 +4,7 @@
 import * as en from "../data/content.en.ts";
 import * as tr from "../data/content.tr.ts";
 import { LAST_UPDATED, SITE_URL } from "../data/site.ts";
+import { citation, pageRange, publicationList, publicationPath, publicationsBySlug, type Publication } from "../data/publications.ts";
 
 const content = { en, tr };
 // Declared locally rather than imported from LanguageContext: vite.config.ts imports this file,
@@ -32,6 +33,37 @@ export function pageFacts(lang: Language) {
     requiredText: [c.profile.name, c.experience[0].title, c.experience[c.experience.length - 1].title, c.education[0].title],
     resumePdfUrl: c.profile.resumePdfUrl,
   };
+}
+
+export function publicationUrl(slug: string) {
+  return `${SITE_URL}${publicationPath(slug)}`;
+}
+
+export const publicationSlugs = publicationList.map((p) => p.slug);
+
+function getPublication(slug: string) {
+  const p = publicationsBySlug.get(slug);
+  if (!p) throw new Error(`Unknown publication slug "${slug}"`);
+  return p;
+}
+
+// Same idea as pageFacts, for a /publications/<slug> page.
+export function publicationFacts(slug: string) {
+  const p = getPublication(slug);
+  return {
+    lang: "en",
+    url: publicationUrl(slug),
+    alternates: [] as string[],
+    requiredText: [p.title, "Emre Çancıoğlu"],
+    requiredMeta: ["citation_title", "citation_author", "citation_publication_date"],
+    minTextChars: 300,
+  };
+}
+
+function truncate(text: string, max: number) {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max - 1);
+  return `${cut.slice(0, cut.lastIndexOf(" "))}…`;
 }
 
 function escapeAttr(value: string) {
@@ -83,13 +115,7 @@ export function buildJsonLd(lang: Language) {
     sameAs: [c.profile.social.linkedin, c.profile.social.github, c.profile.social.orcid],
   };
 
-  const articles = c.publications.map((p) => ({
-    "@type": "ScholarlyArticle",
-    name: p.topic,
-    author: { "@id": PERSON_ID },
-    isPartOf: { "@type": "CreativeWork", name: p.title },
-    ...("url" in p ? { url: p.url } : {}),
-  }));
+  const articles = publicationList.map(scholarlyArticle);
 
   return {
     "@context": "https://schema.org",
@@ -117,6 +143,84 @@ export function buildJsonLd(lang: Language) {
       ...articles,
     ],
   };
+}
+
+// Full ScholarlyArticle for one publication; the resume pages embed all five, each publication
+// page embeds its own. Co-authors with a known ORCID get it as their identifier.
+function scholarlyArticle(p: Publication) {
+  const isJournal = p.kind === "journal";
+  return {
+    "@type": "ScholarlyArticle",
+    "@id": `${publicationUrl(p.slug)}#article`,
+    url: publicationUrl(p.slug),
+    headline: p.title,
+    name: p.title,
+    ...(p.titleEn ? { alternativeHeadline: p.titleEn } : {}),
+    inLanguage: p.language,
+    author: p.authors.map((a) =>
+      a.self ? { "@id": PERSON_ID } : { "@type": "Person", name: a.name, ...(a.orcid ? { sameAs: `https://orcid.org/${a.orcid}` } : {}) },
+    ),
+    datePublished: p.date.replace(/\//g, "-"),
+    ...(pageRange(p) ? { pagination: pageRange(p) } : {}),
+    ...(p.doi ? { identifier: { "@type": "PropertyValue", propertyID: "DOI", value: p.doi }, sameAs: `https://doi.org/${p.doi}` } : {}),
+    isPartOf: isJournal
+      ? {
+          "@type": p.volume ? "PublicationVolume" : "PublicationIssue",
+          ...(p.volume ? { volumeNumber: p.volume } : { issueNumber: p.issue }),
+          isPartOf: { "@type": "Periodical", name: p.venue },
+        }
+      : { "@type": "Book", name: p.venue, ...(p.isbn ? { isbn: p.isbn } : {}), ...(p.publisher ? { publisher: { "@type": "Organization", name: p.publisher } } : {}) },
+    ...(p.abstractEn || p.abstractTr ? { abstract: p.abstractEn ?? p.abstractTr } : {}),
+    keywords: p.keywords.join(", "),
+    ...(p.license ? { license: "https://creativecommons.org/licenses/by-nc/4.0/" } : {}),
+  };
+}
+
+// Head for /publications/<slug>: standard meta plus the Google Scholar citation_* tags
+// (https://scholar.google.com/intl/en/scholar/inclusion.html#indexing).
+export function buildPublicationHead(slug: string) {
+  const p = getPublication(slug);
+  const url = publicationUrl(slug);
+  const title = escapeAttr(`${p.titleEn ?? p.title} | Emre Çancıoğlu`);
+  const description = escapeAttr(truncate(p.abstractEn ?? p.abstractTr ?? p.title, 160));
+  const image = `${SITE_URL}${en.seo.ogImage}`;
+  const cite = (name: string, value: string | undefined) => (value ? [`<meta name="${name}" content="${escapeAttr(value)}" />`] : []);
+  const jsonLd = JSON.stringify({ "@context": "https://schema.org", ...scholarlyArticle(p) }).replace(/</g, "\\u003c");
+
+  return [
+    `<title>${title}</title>`,
+    `<meta name="description" content="${description}" />`,
+    `<meta name="author" content="${escapeAttr(p.authors.map((a) => a.name).join(", "))}" />`,
+    `<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />`,
+    `<link rel="canonical" href="${url}" />`,
+    ...cite("citation_title", p.title),
+    ...p.authors.flatMap((a) => cite("citation_author", a.name)),
+    ...cite("citation_publication_date", p.date),
+    ...cite(p.kind === "journal" ? "citation_journal_title" : "citation_conference_title", p.venue),
+    ...cite("citation_volume", p.volume),
+    ...cite("citation_issue", p.issue),
+    ...cite("citation_firstpage", p.firstPage),
+    ...cite("citation_lastpage", p.lastPage),
+    ...cite("citation_doi", p.doi),
+    ...cite("citation_publisher", p.publisher),
+    ...cite("citation_isbn", p.isbn),
+    ...cite("citation_language", p.language),
+    ...cite("citation_keywords", p.keywords.join("; ")),
+    ...cite("citation_abstract_html_url", url),
+    `<meta property="og:type" content="article" />`,
+    `<meta property="og:site_name" content="Emre Çancıoğlu" />`,
+    `<meta property="og:title" content="${title}" />`,
+    `<meta property="og:description" content="${description}" />`,
+    `<meta property="og:url" content="${url}" />`,
+    `<meta property="og:image" content="${image}" />`,
+    `<meta property="og:image:width" content="1200" />`,
+    `<meta property="og:image:height" content="630" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${title}" />`,
+    `<meta name="twitter:description" content="${description}" />`,
+    `<meta name="twitter:image" content="${image}" />`,
+    `<script type="application/ld+json">${jsonLd}</script>`,
+  ].join("\n    ");
 }
 
 export function buildHead(lang: Language) {
@@ -171,10 +275,11 @@ export function buildSitemap() {
     (l) => `  <url>\n    <loc>${pageUrl(l)}</loc>\n    <lastmod>${LAST_UPDATED}</lastmod>\n${alternates}\n  </url>`,
   );
   const pdfs = languages.map((l) => `  <url>\n    <loc>${SITE_URL}${content[l].profile.resumePdfUrl}</loc>\n    <lastmod>${LAST_UPDATED}</lastmod>\n  </url>`);
+  const papers = publicationSlugs.map((slug) => `  <url>\n    <loc>${publicationUrl(slug)}</loc>\n    <lastmod>${LAST_UPDATED}</lastmod>\n  </url>`);
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-${[...pages, ...pdfs].join("\n")}
+${[...pages, ...papers, ...pdfs].join("\n")}
 </urlset>
 `;
 }
@@ -193,6 +298,10 @@ ${c.profile.name} (also written "Emre Cancioglu") is a ${c.experience[0].title} 
 - [Resume website (English)](${pageUrl("en")}): experience, skills, awards, publications, certifications, education
 - [Özgeçmiş (Türkçe)](${pageUrl("tr")}): the same resume in Turkish
 - [Full resume as plain text](${SITE_URL}/llms-full.txt): every section of the English resume in Markdown
+
+## Publications
+
+${publicationList.map((p) => `- [${p.titleEn ?? p.title}](${publicationUrl(p.slug)}): ${p.venue}, ${p.date.slice(0, 4)}`).join("\n")}
 
 ## Resume PDFs
 
@@ -228,7 +337,7 @@ export function buildLlmsFullTxt() {
     section("Honors & Awards", `${c.awardsNote}\n\n${c.awards.map((a) => `- ${a.date} — ${a.items.join(", ")}, ${a.title} (${a.place})`).join("\n")}`),
     section(
       "Presentations & Publications",
-      c.publications.map((p) => `- **${p.title}** (${p.place}, ${p.date}) — ${p.role}. ${p.topic}${"url" in p ? ` ${p.url}` : ""}`).join("\n"),
+      publicationList.map((p) => `- ${citation(p)} — ${publicationUrl(p.slug)}`).join("\n"),
     ),
     section("Certifications", c.certifications.map((cert) => `- ${cert.title} — ${cert.issuer} (${cert.date})`).join("\n")),
     section(

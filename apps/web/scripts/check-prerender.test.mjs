@@ -17,7 +17,7 @@ describe("checkPrerenderedPage", () => {
 
   it("flags an empty render", () => {
     const problems = checkPrerenderedPage(page("en", { body: "" }), pageFacts("en"));
-    expect(problems.some((p) => p.includes("characters of resume text"))).toBe(true);
+    expect(problems.some((p) => p.includes("characters of text"))).toBe(true);
     expect(problems.some((p) => p.includes("resume text is missing"))).toBe(true);
   });
 

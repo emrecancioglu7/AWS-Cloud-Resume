@@ -5,7 +5,7 @@ export const profile = {
   shortBio:
     "Results-driven Digitalization & AI Supervisor with over 9 years of experience leading digital transformation and applied-AI initiatives on the industrial production floor — currently overseeing OT digitalization and AI strategy across 3 manufacturing facilities.",
   longBio:
-    "Managing a 2-person engineering team, coordinating across 10+ cross-functional departments, and leading the company-wide AI Ambassador program. Delivers measurable impact through predictive maintenance, computer-vision-based safety systems (contributing to 4 consecutive years of zero workplace accidents in the areas where they were deployed), GenAI-powered automation, and energy & sustainability analytics. Deep hands-on expertise with PLC, SCADA, and industrial protocols (OPC UA, MQTT, Profinet), balanced with strong software/cloud and leadership capability (Node.js, React, Azure/AWS, Kubernetes). Recognized with multiple 1st-place finishes and an Innovation Special Award across İnci Holding's group companies, and the author of 4 scientific publications in applied machine learning and industrial automation.",
+    "Managing a 2-person engineering team, coordinating across 10+ cross-functional departments, and leading the company-wide AI Ambassador program. Delivers measurable impact through predictive maintenance, computer-vision-based safety systems (contributing to 4 consecutive years of zero workplace accidents in the areas where they were deployed), GenAI-powered automation, and energy & sustainability analytics. Deep hands-on expertise with PLC, SCADA, and industrial protocols (OPC UA, MQTT, Profinet), balanced with strong software/cloud and leadership capability (Node.js, React, Azure/AWS, Kubernetes). Recognized with multiple 1st-place finishes and an Innovation Special Award across İnci Holding's group companies, and the author of 5 scientific publications in applied machine learning and industrial automation.",
   birthday: "1995-08-10",
   website: "emrecancioglu.com",
   phone: "+90 536 702 43 66",
@@ -39,7 +39,7 @@ export const highlights = [
   { metric: "3", label: "Facilities" },
   { metric: "2", label: "Person Team" },
   { metric: "57%", label: "Cost Reduction" },
-  { metric: "4", label: "Publications" },
+  { metric: "5", label: "Publications" },
   { metric: "6", label: "Awards" },
 ] as const;
 
@@ -126,8 +126,10 @@ export const awards = [
   { title: "Cevdet İnci Incentive Awards", date: "2023", place: "İzmir/TÜRKİYE", items: ["1st Place"] },
 ] as const;
 
+// Short resume-section summaries; each links to its full page via `slug` (details in publications.ts).
 export const publications = [
   {
+    slug: "energy-forecasting-battery-production-2026",
     title: "13th International European Conference on Interdisciplinary Scientific Research",
     date: "May 2026",
     place: "Tirana, ALBANIA",
@@ -136,30 +138,39 @@ export const publications = [
       "ML regression models (XGBoost, LightGBM, GBM) forecasting electricity and compressed-air consumption on battery production lines, achieving R² up to 0.944 for short-term forecasts.",
   },
   {
+    slug: "unified-namespace-mqtt-opc-ua-2024",
     title: "R&D & Innovation 2024",
     date: "Dec 2024",
     place: "Manisa, TÜRKİYE",
     role: "Writer | Researcher",
-    topic: "Data Integration for Industry 4.0 and IIoT: Unified Namespace-Based Digital Transformation with MQTT, OPC UA, and Node.js.",
-    url: "https://drive.google.com/file/d/1ivfaVjw6XqgFRJAQo3pBvQmMTUhmbsgr/view?usp=sharing",
+    topic: "Data Integration for Industry 4.0 and IoT: Unified Namespace-Based Digital Transformation with MQTT, OPC UA, and Node.js.",
   },
   {
+    slug: "fault-detection-poincare-ensemble-2021",
     title: "Human-Computer Interaction Optimization and Robotic Applications",
     date: "Jun 2021",
     place: "TÜRKİYE",
     role: "Writer | Researcher",
     topic:
       "Fault Detection and Diagnosis in Process Control Systems using Machine Learning (ensemble learning) Methods from Poincaré Plot Measurements, improving classification accuracy to 89.5% on the Tennessee Eastman Process.",
-    url: "https://drive.google.com/file/d/1Z7KmRMDIiHNtQE6XNgA1lG3MkYo-7Zpp/view?usp=sharing",
   },
   {
+    slug: "lstm-heart-sound-classification-2020",
     title: "International Medical Device Conference",
     date: "Sep 2020",
     place: "Antalya, TÜRKİYE",
     role: "Writer | Researcher",
     topic:
-      "Long-Short Term Memory (LSTM)-Based Heart Sounds Analysis and Classification: an LSTM model classifying phonocardiogram recordings into Normal, Murmur, Extrasystole, and Artifact categories with 79.0% accuracy (Journal of Intelligent Systems and Applications, Vol. 3(1), 2020).",
-    url: "https://drive.google.com/file/d/1ZHOTCGskb33IGZGYQ3Ekqhd1twpte5GM/view?usp=sharing",
+      "Heart Sounds Analysis and Classification Based on Long-Short Term Memory: an LSTM model classifying phonocardiogram recordings into Normal, Murmur, Extrasystole, and Artifact categories with 79.0% accuracy (Journal of Intelligent Systems with Applications, 3(1), 2020).",
+  },
+  {
+    slug: "ecg-fpga-digital-filter-design-2020",
+    title: "Journal of Intelligent Systems with Applications",
+    date: "2020",
+    place: "İzmir, TÜRKİYE",
+    role: "Writer | Researcher",
+    topic:
+      "Design and Implementation of Digital Filters for ECG Data Based on Field Programmable Gate Array and MATLAB: four digital filters (low-pass, high-pass, band-pass, band-stop) built on FPGA with MATLAB System Generator (3(1), 2020).",
   },
 ] as const;
 
@@ -287,6 +298,6 @@ export const services = [
     icon: "award",
     title: "Recognized Innovation & Research",
     description:
-      "Multiple 1st-place finishes and an Innovation Special Award at the Cevdet İnci Incentive Awards, İnci GS Yuasa Stars awards, and a Sustainability Business Awards finalist spot (Technology & AI). Author of 4 scientific publications in applied machine learning and industrial automation.",
+      "Multiple 1st-place finishes and an Innovation Special Award at the Cevdet İnci Incentive Awards, İnci GS Yuasa Stars awards, and a Sustainability Business Awards finalist spot (Technology & AI). Author of 5 scientific publications in applied machine learning and industrial automation.",
   },
 ] as const;

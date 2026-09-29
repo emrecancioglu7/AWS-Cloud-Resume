@@ -52,12 +52,12 @@ jobs:
 
           # Images, video, PDFs, favicon: stable filenames, cache for a day.
           aws s3 sync dist "s3://$BUCKET" --acl private --delete --follow-symlinks \
-            --exclude "assets/*" --exclude "*.html" --exclude "*.xml" --exclude "*.txt" --exclude "*.webmanifest" --exclude "tr" \
+            --exclude "assets/*" --exclude "*.html" --exclude "*.xml" --exclude "*.txt" --exclude "*.webmanifest" --exclude "tr" --exclude "publications/*" \
             --cache-control "public, max-age=86400"
 
           # Documents that must update as soon as a deploy lands: always revalidate.
           aws s3 sync dist "s3://$BUCKET" --acl private \
-            --exclude "*" --include "*.html" --include "*.xml" --exclude "tr.html" \
+            --exclude "*" --include "*.html" --include "*.xml" --exclude "tr.html" --exclude "publications/*" \
             --cache-control "no-cache"
           aws s3 sync dist "s3://$BUCKET" --acl private \
             --exclude "*" --include "*.txt" \
@@ -69,6 +69,16 @@ jobs:
           # Content-Type has to be set explicitly (S3 can't infer it from a filename).
           aws s3 cp dist/tr.html "s3://$BUCKET/tr" --acl private \
             --content-type "text/html; charset=utf-8" --cache-control "no-cache"
+
+          # Same for each prerendered publication page: dist/publications/<slug>.html is served at
+          # "/publications/<slug>". Keys for slugs that no longer exist are removed afterwards.
+          for f in dist/publications/*.html; do
+            aws s3 cp "$f" "s3://$BUCKET/publications/$(basename "$f" .html)" --acl private \
+              --content-type "text/html; charset=utf-8" --cache-control "no-cache"
+          done
+          for key in $(aws s3 ls "s3://$BUCKET/publications/" | awk '{print $4}'); do
+            [ -f "dist/publications/$key.html" ] || aws s3 rm "s3://$BUCKET/publications/$key"
+          done
 
       - name: Create CloudFront invalidation
         if: ${{ vars.AWS_CLOUDFRONT_DISTRIBUTION_ID != '' }}

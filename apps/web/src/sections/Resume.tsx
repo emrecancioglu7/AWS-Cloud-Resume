@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
-import { Award, ExternalLink } from "lucide-react";
+import { ArrowUpRight, Award } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useContent } from "../data/useContent";
+import { publicationPath } from "../data/publications";
 import { Reveal } from "../components/Reveal";
 import { SectionHeading } from "../components/SectionHeading";
 import { Timeline, TimelineItem } from "../components/Timeline";
@@ -48,18 +50,12 @@ export function Resume() {
             <Timeline>
               {publications.map((p, i) => (
                 <TimelineItem key={i}>
-                  {"url" in p ? (
-                    <a
-                      href={p.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-1 rounded font-semibold underline decoration-(--color-accent) underline-offset-2 ${focusRing}`}
-                    >
-                      {p.title} <ExternalLink size={14} />
-                    </a>
-                  ) : (
-                    <h4 className="font-semibold">{p.title}</h4>
-                  )}
+                  <Link
+                    to={publicationPath(p.slug)}
+                    className={`inline-flex items-center gap-1 rounded font-semibold underline decoration-(--color-accent) underline-offset-2 ${focusRing}`}
+                  >
+                    {p.title} <ArrowUpRight size={14} />
+                  </Link>
                   <p className="text-sm text-(--color-accent)">{p.date}</p>
                   <p className="text-sm italic text-(--color-text-muted)">{p.place}</p>
                   <p className="text-sm text-(--color-text-muted)">{p.role}</p>

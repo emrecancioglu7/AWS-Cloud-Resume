@@ -73,8 +73,7 @@ function resumeHtml(c, page) {
 }
 
 // Share card for /github.html (LinkedIn wrapper around the GitHub profile, whose own preview is
-// always just the avatar) and the social-preview image uploaded in the AWS-Cloud-Resume repo's
-// GitHub settings (1280×640, GitHub's recommended size).
+// always just the avatar).
 const githubLogo = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#ececea" d="${
   (await (await fetch("https://cdn.jsdelivr.net/npm/simple-icons@13/icons/github.svg")).text()).match(/ d="([^"]+)"/)[1]
 }"/></svg>`;
@@ -109,34 +108,6 @@ function githubHtml(c) {
       <div class="chips">${chips}</div></div>
     <div class="logo">${githubLogo}</div>
     <div class="url">github.com/emrecancioglu7</div>
-  </body></html>`;
-}
-
-function repoHtml() {
-  const box = (title, sub) => `<div class="box"><b>${title}</b><span>${sub}</span></div>`;
-  return `<!doctype html><html><head><meta charset="utf-8" />${fonts}<style>${cardCss}
-    body { width: 1280px; height: 640px; }
-    .text { position: absolute; left: 88px; top: 70px; right: 80px; }
-    h1 { margin-top: 22px; font-size: 80px; }
-    .sub { margin-top: 12px; font-size: 26px; }
-    .flow { position: absolute; left: 88px; right: 80px; top: 320px; display: flex; align-items: stretch; gap: 12px; }
-    .box { flex: 1; padding: 20px 16px; justify-content: center; border-radius: 16px; background: #131519; border: 1px solid #262a30; display: flex; flex-direction: column; gap: 6px; }
-    .box b { font-size: 21px; white-space: nowrap; } .box span { font-size: 15px; color: #9a9a97; white-space: nowrap; }
-    .arrow { color: #34d399; font-size: 28px; font-weight: 700; align-self: center; }
-    .chips { position: absolute; left: 88px; top: 452px; }
-    .url { left: 88px; }
-  </style></head><body><div class="glow"></div><div class="bar"></div>
-    <div class="text"><span class="tag">OPEN SOURCE · AWS SERVERLESS</span><h1>AWS Cloud Resume</h1>
-      <div class="sub">Prerendered bilingual resume site + private admin panel, fully on AWS</div></div>
-    <div class="flow">
-      ${box("React + TS", "Vite · prerendered")}<span class="arrow">→</span>
-      ${box("S3 + CloudFront", "hosting · CDN")}<span class="arrow">→</span>
-      ${box("API Gateway", "Cognito JWT")}<span class="arrow">→</span>
-      ${box("Lambda", "Node 20 · TS")}<span class="arrow">→</span>
-      ${box("DynamoDB", "single-table")}
-    </div>
-    <div class="chips"><span class="chip">Terraform</span><span class="chip">GitHub Actions CI/CD</span><span class="chip">Cognito + TOTP MFA</span><span class="chip">S3 event pipeline</span><span class="chip">Vitest</span></div>
-    <div class="url">github.com/emrecancioglu7/AWS-Cloud-Resume</div>
   </body></html>`;
 }
 
@@ -180,8 +151,6 @@ await screenshot(resumeHtml(en, page), 1200, 630, join(publicDir, "og/og-resume.
 await rm(pageDir, { recursive: true, force: true });
 
 await screenshot(githubHtml(en), 1200, 630, join(publicDir, "og/og-github.png"));
-// Not served by the site — upload it by hand: repo Settings → General → Social preview.
-await screenshot(repoHtml(), 1280, 640, fileURLToPath(new URL("../../../.github/social-preview.png", import.meta.url)));
 
 const icon512 = join(publicDir, "icons/icon-512.png");
 await screenshot(iconHtml, 512, 512, icon512);

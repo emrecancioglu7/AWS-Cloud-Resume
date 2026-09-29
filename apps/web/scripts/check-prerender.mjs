@@ -22,7 +22,9 @@ function attr(html, pattern) {
   return html.match(pattern)?.[1];
 }
 
-// facts: pageFacts(lang) from src/seo/site.ts. Returns a list of problems (empty = OK).
+// facts: pageFacts(lang) or publicationFacts(slug) from src/seo/site.ts. Optional fields:
+// requiredMeta (meta names that must be present), minTextChars (overrides MIN_TEXT_CHARS),
+// resumePdfUrl (a link that must be present). Returns a list of problems (empty = OK).
 export function checkPrerenderedPage(html, facts) {
   const problems = [];
   const text = visibleText(html);
@@ -34,7 +36,10 @@ export function checkPrerenderedPage(html, facts) {
   for (const href of facts.alternates) {
     if (!html.includes(`" href="${href}" />`) || !html.includes("hreflang=")) problems.push(`missing hreflang alternate ${href}`);
   }
-  if (!html.includes('hreflang="x-default"')) problems.push("missing hreflang x-default");
+  if (facts.alternates.length > 0 && !html.includes('hreflang="x-default"')) problems.push("missing hreflang x-default");
+  for (const name of facts.requiredMeta ?? []) {
+    if (!new RegExp(`<meta name="${name}" content="[^"]+"`).test(html)) problems.push(`missing <meta name="${name}">`);
+  }
   if (!/<meta property="og:image" content="https:\/\/[^"]+"/.test(html)) problems.push("missing absolute og:image");
 
   const jsonLd = attr(html, /<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
@@ -43,15 +48,19 @@ export function checkPrerenderedPage(html, facts) {
   } else {
     try {
       const types = (JSON.parse(jsonLd)["@graph"] ?? []).map((node) => node["@type"]);
-      for (const type of ["ProfilePage", "Person"]) if (!types.includes(type)) problems.push(`JSON-LD has no ${type}`);
+      const parsed = JSON.parse(jsonLd);
+      const nodeTypes = parsed["@graph"] ? types : [parsed["@type"]];
+      const expected = facts.requiredMeta ? ["ScholarlyArticle"] : ["ProfilePage", "Person"];
+      for (const type of expected) if (!nodeTypes.includes(type)) problems.push(`JSON-LD has no ${type}`);
     } catch (e) {
       problems.push(`JSON-LD is not valid JSON (${e.message})`);
     }
   }
 
-  if (text.length < MIN_TEXT_CHARS) problems.push(`only ${text.length} characters of resume text (expected at least ${MIN_TEXT_CHARS}) — did the render come out empty?`);
+  const minChars = facts.minTextChars ?? MIN_TEXT_CHARS;
+  if (text.length < minChars) problems.push(`only ${text.length} characters of text (expected at least ${minChars}) — did the render come out empty?`);
   for (const needle of facts.requiredText) if (!text.includes(needle)) problems.push(`resume text is missing "${needle}"`);
-  if (!html.includes(`href="${facts.resumePdfUrl}"`)) problems.push(`no link to ${facts.resumePdfUrl}`);
+  if (facts.resumePdfUrl && !html.includes(`href="${facts.resumePdfUrl}"`)) problems.push(`no link to ${facts.resumePdfUrl}`);
 
   // Count-up animations start at 0 in the browser; the server render must show the real value.
   const zeroMetric = text.match(/(?<![\d.,])0(?:[.,]0+)?(?:%|\+|x|K)(?![\w])|(?<![\w])%0(?![\d]|[.,]\d)/);

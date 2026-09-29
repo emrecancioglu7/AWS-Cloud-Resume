@@ -5,7 +5,7 @@ export const profile = {
   shortBio:
     "Endüstriyel üretim sahasında dijital dönüşüm ve uygulamalı yapay zeka girişimlerine liderlik eden, 9 yılı aşkın deneyime sahip sonuç odaklı bir Dijitalleşme ve Yapay Zeka Ekip Lideriyim; şu anda 3 üretim tesisinde OT dijitalleşmesi ve yapay zeka stratejisini yürütüyorum.",
   longBio:
-    "2 kişilik bir mühendislik ekibini yönetiyor, 10'dan fazla fonksiyon/departmanla koordinasyon sağlıyor ve şirket çapındaki AI Elçileri programına liderlik ediyorum. Kestirimci bakım, bilgisayarlı görü tabanlı güvenlik sistemleri (uygulandığı alanlarda 4 yıl kesintisiz sıfır iş kazası), GenAI destekli otomasyon ve enerji & sürdürülebilirlik analitiği ile ölçülebilir etki sağlıyorum. PLC, SCADA ve endüstriyel protokoller (OPC UA, MQTT, Profinet) konusundaki derin uygulamalı uzmanlığımı güçlü yazılım/bulut ve liderlik yetkinlikleriyle (Node.js, React, Azure/AWS, Kubernetes) dengeliyorum. İnci Holding grup şirketleri çapında çoklu birincilik ve bir İnovasyon Özel Ödülü kazandım; uygulamalı makine öğrenmesi ve endüstriyel otomasyon alanında 4 bilimsel yayınım bulunuyor.",
+    "2 kişilik bir mühendislik ekibini yönetiyor, 10'dan fazla fonksiyon/departmanla koordinasyon sağlıyor ve şirket çapındaki AI Elçileri programına liderlik ediyorum. Kestirimci bakım, bilgisayarlı görü tabanlı güvenlik sistemleri (uygulandığı alanlarda 4 yıl kesintisiz sıfır iş kazası), GenAI destekli otomasyon ve enerji & sürdürülebilirlik analitiği ile ölçülebilir etki sağlıyorum. PLC, SCADA ve endüstriyel protokoller (OPC UA, MQTT, Profinet) konusundaki derin uygulamalı uzmanlığımı güçlü yazılım/bulut ve liderlik yetkinlikleriyle (Node.js, React, Azure/AWS, Kubernetes) dengeliyorum. İnci Holding grup şirketleri çapında çoklu birincilik ve bir İnovasyon Özel Ödülü kazandım; uygulamalı makine öğrenmesi ve endüstriyel otomasyon alanında 5 bilimsel yayınım bulunuyor.",
   birthday: "1995-08-10",
   website: "emrecancioglu.com",
   phone: "+90 536 702 43 66",
@@ -39,7 +39,7 @@ export const highlights = [
   { metric: "3", label: "Tesis" },
   { metric: "2", label: "Kişilik Ekip" },
   { metric: "%57", label: "Maliyet Azaltımı" },
-  { metric: "4", label: "Yayın" },
+  { metric: "5", label: "Yayın" },
   { metric: "6", label: "Ödül" },
 ] as const;
 
@@ -125,8 +125,10 @@ export const awards = [
   { title: "Cevdet İnci Teşvik Ödülleri", date: "2023", place: "İzmir/TÜRKİYE", items: ["Birincilik"] },
 ] as const;
 
+// Özgeçmiş bölümündeki kısa özetler; her biri `slug` ile kendi sayfasına bağlanır (ayrıntılar publications.ts'de).
 export const publications = [
   {
+    slug: "energy-forecasting-battery-production-2026",
     title: "13th International European Conference on Interdisciplinary Scientific Research",
     date: "May 2026",
     place: "Tiran, ARNAVUTLUK",
@@ -135,30 +137,39 @@ export const publications = [
       "Akü üretim hatlarında elektrik ve basınçlı hava tüketimini tahminleyen ML regresyon modelleri (XGBoost, LightGBM, GBM); kısa vadeli tahminlerde R² değeri 0.944'e kadar.",
   },
   {
+    slug: "unified-namespace-mqtt-opc-ua-2024",
     title: "R&D & Innovation 2024",
     date: "Ara 2024",
     place: "Manisa, TÜRKİYE",
     role: "Yazar | Araştırmacı",
-    topic: "Endüstri 4.0 ve IIoT için Veri Entegrasyonu: MQTT, OPC UA ve Node.js ile Unified Namespace Tabanlı Dijital Dönüşüm.",
-    url: "https://drive.google.com/file/d/1ivfaVjw6XqgFRJAQo3pBvQmMTUhmbsgr/view?usp=sharing",
+    topic: "Endüstri 4.0 ve IoT İçin Veri Entegrasyonu: MQTT, OPC UA ve Node.js ile Unified Namespace Tabanlı Dijital Dönüşüm.",
   },
   {
+    slug: "fault-detection-poincare-ensemble-2021",
     title: "Human-Computer Interaction Optimization and Robotic Applications",
     date: "Haz 2021",
     place: "TÜRKİYE",
     role: "Yazar | Araştırmacı",
     topic:
       "Poincaré Grafiği ölçümlerinden Makine Öğrenmesi (topluluk öğrenmesi) yöntemleriyle proses kontrol sistemlerinde hata tespiti ve teşhisi; Tennessee Eastman Sürecinde sınıflandırma doğruluğu %89,5.",
-    url: "https://drive.google.com/file/d/1Z7KmRMDIiHNtQE6XNgA1lG3MkYo-7Zpp/view?usp=sharing",
   },
   {
+    slug: "lstm-heart-sound-classification-2020",
     title: "International Medical Device Conference",
     date: "Eyl 2020",
     place: "Antalya, TÜRKİYE",
     role: "Yazar | Araştırmacı",
     topic:
-      "Uzun-Kısa Vadeli Bellek (LSTM) Tabanlı Kalp Sesi Analizi ve Sınıflandırması: fonokardiyogram kayıtlarını Normal, Hırıltılı, Ekstrasistol ve Yapay kategorilerine %79,0 doğrulukla sınıflandıran bir LSTM modeli (Akıllı Sistemler ve Uygulamaları Dergisi, Cilt 3(1), 2020).",
-    url: "https://drive.google.com/file/d/1ZHOTCGskb33IGZGYQ3Ekqhd1twpte5GM/view?usp=sharing",
+      "Uzun-Kısa Vade Hafıza Tabanlı Kalp Ritmi Analizi ve Sınıflandırması: fonokardiyogram kayıtlarını Normal, Hırıltılı, Ekstrasistol ve Yapay kategorilerine %79,0 doğrulukla sınıflandıran bir LSTM modeli (Akıllı Sistemler ve Uygulamaları Dergisi, 3(1), 2020).",
+  },
+  {
+    slug: "ecg-fpga-digital-filter-design-2020",
+    title: "Akıllı Sistemler ve Uygulamaları Dergisi",
+    date: "2020",
+    place: "İzmir, TÜRKİYE",
+    role: "Yazar | Araştırmacı",
+    topic:
+      "ECG Verisi İçin Alanda Programlanabilir Kapı Dizileri ve MATLAB Tabanlı Dijital Filtre Tasarımı ve Gerçeklemesi: MATLAB System Generator ile FPGA üzerinde dört dijital filtre (alçak, yüksek, bant geçiren ve bant durduran) (3(1), 2020).",
   },
 ] as const;
 
@@ -286,6 +297,6 @@ export const services = [
     icon: "award",
     title: "Ödüllü İnovasyon ve Araştırma",
     description:
-      "Cevdet İnci Teşvik Ödülleri'nde çoklu birincilik ve İnovasyon Özel Ödülü, İnci GS Yuasa Stars ödülleri ve Sustainability Business Awards (Teknoloji & Yapay Zeka) finalistliği. Uygulamalı makine öğrenmesi ve endüstriyel otomasyon alanında 4 bilimsel yayın.",
+      "Cevdet İnci Teşvik Ödülleri'nde çoklu birincilik ve İnovasyon Özel Ödülü, İnci GS Yuasa Stars ödülleri ve Sustainability Business Awards (Teknoloji & Yapay Zeka) finalistliği. Uygulamalı makine öğrenmesi ve endüstriyel otomasyon alanında 5 bilimsel yayın.",
   },
 ] as const;
