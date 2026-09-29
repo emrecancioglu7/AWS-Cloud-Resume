@@ -119,7 +119,18 @@ export function Resume() {
                   </p>
                   <p className="text-sm text-(--color-text-muted)">
                     <strong className="text-(--color-text)">{ui.resume.thesis}: </strong>
-                    {ed.thesis}
+                    {"thesisUrl" in ed ? (
+                      <a
+                        href={ed.thesisUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`rounded underline decoration-(--color-accent) underline-offset-2 hover:text-(--color-accent) ${focusRing}`}
+                      >
+                        {ed.thesis}
+                      </a>
+                    ) : (
+                      ed.thesis
+                    )}
                   </p>
                 </TimelineItem>
               ))}

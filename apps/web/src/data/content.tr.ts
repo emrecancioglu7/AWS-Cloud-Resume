@@ -18,6 +18,10 @@ export const profile = {
     linkedin: "https://www.linkedin.com/in/emrecancioglu/",
     github: "https://github.com/emrecancioglu7",
     orcid: "https://orcid.org/0000-0002-9918-4668",
+    // Not shown on the page — emitted as rel="me" links and JSON-LD sameAs so search and AI
+    // engines connect these profiles to the same person.
+    semanticScholar: "https://www.semanticscholar.org/author/2145809254",
+    academia: "https://independent.academia.edu/E%C3%87anc%C4%B1o%C4%9Flu",
   },
   resumePdfUrl: "/pdf/Resume_EmreCANCIOGLU_TR.pdf",
 } as const;
@@ -249,6 +253,7 @@ export const education = [
     date: "Eyl 2019 - Haz 2022",
     school: "İzmir Katip Çelebi Üniversitesi, İzmir/TÜRKİYE",
     gpa: "4.00 üzerinden 3,64 (%100 İngilizce Bölüm)",
+    thesisUrl: "https://hdl.handle.net/11469/3001",
     coursework: "İstatistiksel Proses Kontrol | Veri Toplama ve Kontrol | Uygulamalı Makine Öğrenmesi | Yapay Sinir Ağları.",
     thesis: "Poincaré Grafiği ve İstatistiksel Analize Dayalı ML ile Tennessee Eastman Sürecinin Hata Tespiti ve Teşhisi.",
   },

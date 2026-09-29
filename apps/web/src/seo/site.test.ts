@@ -38,7 +38,10 @@ describe("seo/site", () => {
     const graph = buildJsonLd("en")["@graph"];
     const person = graph.find((node) => node["@type"] === "Person") as Record<string, unknown>;
     expect(person.jobTitle).toBe(en.experience[0].title);
-    expect(person.sameAs).toEqual([en.profile.social.linkedin, en.profile.social.github, en.profile.social.orcid]);
+    expect(person.sameAs).toEqual(Object.values(en.profile.social));
+    expect(person.sameAs).toEqual(expect.arrayContaining([en.profile.social.orcid, en.profile.social.semanticScholar, en.profile.social.academia]));
+    const thesis = graph.find((node) => node["@type"] === "Thesis") as Record<string, unknown>;
+    expect(thesis.url).toBe(en.education[0].thesisUrl);
     const articles = graph.filter((node) => node["@type"] === "ScholarlyArticle") as Record<string, unknown>[];
     expect(articles.map((a) => a.url)).toEqual(publicationList.map((p) => publicationUrl(p.slug)));
   });

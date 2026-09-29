@@ -50,15 +50,19 @@ jobs:
           aws s3 sync dist/assets "s3://$BUCKET/assets" --acl private --delete \
             --cache-control "public, max-age=31536000, immutable"
 
-          # Images, video, PDFs, favicon: stable filenames, cache for a day.
+          # Images, video, favicon: stable filenames, cache for a day.
           aws s3 sync dist "s3://$BUCKET" --acl private --delete --follow-symlinks \
-            --exclude "assets/*" --exclude "*.html" --exclude "*.xml" --exclude "*.txt" --exclude "*.webmanifest" --exclude "tr" --exclude "publications/*" \
+            --exclude "assets/*" --exclude "*.html" --exclude "*.xml" --exclude "*.txt" --exclude "*.webmanifest" --exclude "tr" --exclude "publications/*" --exclude "*.pdf" \
             --cache-control "public, max-age=86400"
 
           # Documents that must update as soon as a deploy lands: always revalidate.
           aws s3 sync dist "s3://$BUCKET" --acl private \
             --exclude "*" --include "*.html" --include "*.xml" --exclude "tr.html" --exclude "publications/*" \
             --cache-control "no-cache"
+          # Resume PDFs keep the same filename across CV updates, so a day of browser caching
+          # would keep showing the old CV to anyone who opened it before.
+          aws s3 sync dist/pdf "s3://$BUCKET/pdf" --acl private --delete \
+            --exclude "*" --include "*.pdf" --cache-control "no-cache"
           aws s3 sync dist "s3://$BUCKET" --acl private \
             --exclude "*" --include "*.txt" \
             --content-type "text/plain; charset=utf-8" --cache-control "no-cache"

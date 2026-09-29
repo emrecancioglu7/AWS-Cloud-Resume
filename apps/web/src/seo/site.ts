@@ -4,7 +4,7 @@
 import * as en from "../data/content.en.ts";
 import * as tr from "../data/content.tr.ts";
 import { LAST_UPDATED, SITE_URL } from "../data/site.ts";
-import { citation, pageRange, publicationList, publicationPath, publicationsBySlug, type Publication } from "../data/publications.ts";
+import { citation, mscThesis, pageRange, publicationList, publicationPath, publicationsBySlug, type Publication } from "../data/publications.ts";
 
 const content = { en, tr };
 // Declared locally rather than imported from LanguageContext: vite.config.ts imports this file,
@@ -112,10 +112,23 @@ export function buildJsonLd(lang: Language) {
         recognizedBy: { "@type": "Organization", name: cert.issuer },
       })),
     ],
-    sameAs: [c.profile.social.linkedin, c.profile.social.github, c.profile.social.orcid],
+    sameAs: Object.values(c.profile.social),
   };
 
   const articles = publicationList.map(scholarlyArticle);
+  const thesis = {
+    "@type": "Thesis",
+    "@id": `${SITE_URL}/#msc-thesis`,
+    name: mscThesis.title,
+    alternateName: [mscThesis.titleTr, c.education[0].thesis],
+    author: { "@id": PERSON_ID },
+    contributor: { "@type": "Person", name: mscThesis.advisor.name, sameAs: `https://orcid.org/${mscThesis.advisor.orcid}` },
+    datePublished: mscThesis.year,
+    inSupportOf: c.education[0].title,
+    sourceOrganization: { "@type": "CollegeOrUniversity", name: mscThesis.institution },
+    url: mscThesis.url,
+    inLanguage: "en",
+  };
 
   return {
     "@context": "https://schema.org",
@@ -141,6 +154,7 @@ export function buildJsonLd(lang: Language) {
       },
       person,
       ...articles,
+      thesis,
     ],
   };
 }

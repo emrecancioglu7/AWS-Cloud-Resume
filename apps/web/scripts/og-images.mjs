@@ -111,14 +111,38 @@ function githubHtml(c) {
   </body></html>`;
 }
 
-const iconHtml = `<!doctype html><html><head><meta charset="utf-8" />${fonts}<style>
+// Solid accent background + dark "EÇ", sized to stay legible down to a 16px favicon. `round` gives
+// the circular favicon (transparent corners; Google also crops favicons to a circle); the app
+// icons stay full-bleed squares because iOS/Android apply their own corner mask and iOS paints
+// transparent corners black.
+const iconHtml = (round) => `<!doctype html><html><head><meta charset="utf-8" />${fonts}<style>
   * { margin: 0; }
-  body { width: 512px; height: 512px; background: #0a0b0d; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-  div { width: 400px; height: 400px; border-radius: 50%; background: rgba(52,211,153,0.14); color: #34d399; display: flex; align-items: center; justify-content: center;
-        font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 176px; letter-spacing: -4px; }
+  html, body { background: transparent; }
+  body { width: 512px; height: 512px; display: flex; overflow: hidden; }
+  div { width: 512px; height: 512px; ${round ? "border-radius: 50%;" : ""} background: #34d399; color: #0a0b0d; display: flex; align-items: center; justify-content: center;
+        font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 250px; letter-spacing: -10px; }
 </style></head><body><div>EÇ</div></body></html>`;
 
-async function screenshot(html, width, height, out) {
+// Packs PNGs into one .ico (PNG-compressed entries, supported by every current browser).
+function buildIco(pngs) {
+  const header = Buffer.alloc(6 + 16 * pngs.length);
+  header.writeUInt16LE(1, 2); // type: icon
+  header.writeUInt16LE(pngs.length, 4);
+  let offset = header.length;
+  pngs.forEach(({ size, data }, i) => {
+    const entry = 6 + 16 * i;
+    header.writeUInt8(size, entry); // width
+    header.writeUInt8(size, entry + 1); // height
+    header.writeUInt16LE(1, entry + 4); // color planes
+    header.writeUInt16LE(32, entry + 6); // bits per pixel
+    header.writeUInt32LE(data.length, entry + 8);
+    header.writeUInt32LE(offset, entry + 12);
+    offset += data.length;
+  });
+  return Buffer.concat([header, ...pngs.map((p) => p.data)]);
+}
+
+async function screenshot(html, width, height, out, { transparent = false } = {}) {
   const dir = await mkdtemp(join(tmpdir(), "og-"));
   const file = join(dir, "page.html");
   await writeFile(file, html);
@@ -127,6 +151,7 @@ async function screenshot(html, width, height, out) {
     "--disable-gpu",
     "--hide-scrollbars",
     "--force-device-scale-factor=1",
+    ...(transparent ? ["--default-background-color=00000000"] : []),
     // Gives the Google Fonts stylesheet time to load before the capture.
     "--virtual-time-budget=5000",
     `--window-size=${width},${height}`,
@@ -153,9 +178,23 @@ await rm(pageDir, { recursive: true, force: true });
 await screenshot(githubHtml(en), 1200, 630, join(publicDir, "og/og-github.png"));
 
 const icon512 = join(publicDir, "icons/icon-512.png");
-await screenshot(iconHtml, 512, 512, icon512);
+await screenshot(iconHtml(false), 512, 512, icon512);
 // sips ships with macOS — downscale the 512px render for the smaller icon sizes.
 for (const [size, name] of [[192, "icon-192.png"], [180, "apple-touch-icon.png"]]) {
   execFileSync("sips", ["-z", String(size), String(size), icon512, "--out", join(publicDir, "icons", name)], { stdio: "ignore" });
   console.log(`wrote ${join(publicDir, "icons", name)}`);
 }
+
+// favicon.ico: 16/32/48px (48 is the size Google's search results use).
+const faviconDir = await mkdtemp(join(tmpdir(), "favicon-"));
+const favicon512 = join(faviconDir, "512.png");
+await screenshot(iconHtml(true), 512, 512, favicon512, { transparent: true });
+const faviconPngs = [];
+for (const size of [16, 32, 48]) {
+  const out = join(faviconDir, `${size}.png`);
+  execFileSync("sips", ["-z", String(size), String(size), favicon512, "--out", out], { stdio: "ignore" });
+  faviconPngs.push({ size, data: await readFile(out) });
+}
+await writeFile(join(publicDir, "favicon.ico"), buildIco(faviconPngs));
+await rm(faviconDir, { recursive: true, force: true });
+console.log(`wrote ${join(publicDir, "favicon.ico")}`);

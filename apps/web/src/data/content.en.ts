@@ -18,6 +18,10 @@ export const profile = {
     linkedin: "https://www.linkedin.com/in/emrecancioglu/",
     github: "https://github.com/emrecancioglu7",
     orcid: "https://orcid.org/0000-0002-9918-4668",
+    // Not shown on the page — emitted as rel="me" links and JSON-LD sameAs so search and AI
+    // engines connect these profiles to the same person.
+    semanticScholar: "https://www.semanticscholar.org/author/2145809254",
+    academia: "https://independent.academia.edu/E%C3%87anc%C4%B1o%C4%9Flu",
   },
   resumePdfUrl: "/pdf/Resume_EmreCANCIOGLU.pdf",
 } as const;
@@ -250,6 +254,7 @@ export const education = [
     date: "Sep 2019 - Jun 2022",
     school: "İzmir Katip Çelebi University, İzmir/TÜRKİYE",
     gpa: "3.64/4.00 (100% English-Medium Program)",
+    thesisUrl: "https://hdl.handle.net/11469/3001",
     coursework: "Statistical Process Control | Data Acquisition and Control | Applied Machine Learning | Artificial Neural Networks.",
     thesis: "Fault Detection and Diagnosis of the Tennessee Eastman Process Using Statistical Analysis and Machine Learning Methods from Poincaré Plot Measurements.",
   },

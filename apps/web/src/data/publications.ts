@@ -161,6 +161,18 @@ export const publicationList: Publication[] = [
   },
 ];
 
+// The MSc thesis, as registered in İzmir Kâtip Çelebi University's open-access repository. Kept
+// out of publicationList (the resume counts journal/conference publications only) and emitted as
+// a separate Thesis node in the resume pages' JSON-LD.
+export const mscThesis = {
+  title: "Poincaré plot-based fault detection on Tennessee Eastman process using various machine learning algorithms",
+  titleTr: "Çeşitli makine öğrenimi algoritmalarını kullanarak Tennessee Eastman sürecinde Poincaré grafik tabanlı hata tespiti",
+  advisor: SAHIN,
+  year: "2022",
+  institution: "İzmir Kâtip Çelebi University, Graduate School of Natural and Applied Sciences",
+  url: "https://hdl.handle.net/11469/3001",
+};
+
 export const publicationsBySlug = new Map(publicationList.map((p) => [p.slug, p]));
 
 export function publicationPath(slug: string) {
