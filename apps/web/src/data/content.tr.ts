@@ -160,7 +160,7 @@ export const publications = [
   {
     slug: "lstm-heart-sound-classification-2020",
     title: "International Medical Device Conference",
-    date: "Eyl 2020",
+    date: "Kas 2020",
     place: "Antalya, TÜRKİYE",
     role: "Yazar | Araştırmacı",
     topic:
