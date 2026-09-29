@@ -40,7 +40,7 @@ No root-level build tooling — each app manages its own `package.json`/`node_mo
 5. **Verify:** `npm run test && npm run build` in `apps/web` (tests enforce no `www.` URLs etc.), then push to `main` (the owner pushes).
 6. **After deploy (optional but useful):** re-inspect `https://emrecancioglu.com/` and `/tr` in LinkedIn Post Inspector so shared-link previews refresh; if the job title changed, update the GitHub bio and LinkedIn headline too so every source states the same facts.
 
-Search Console / Bing: already set up (2026-09-28) with `sitemap.xml` submitted — nothing to redo on a normal CV update. **Never delete `apps/web/public/google5b96d66d6d684532.html`** — it's the Google Search Console ownership-verification file, and Google re-checks it periodically.
+Search Console / Bing: already set up (2026-09-28) with `sitemap.xml` submitted — nothing to redo on a normal CV update. **Never delete `apps/web/public/google5b96d66d6d684532.html`** (Google Search Console ownership-verification file — Google re-checks it periodically) **or `apps/web/public/ca3a3cf4f6b8157ac5d24f6653c4b18a.txt`** (IndexNow key — `deploy-web.yml` pings IndexNow on every deploy so Bing/ChatGPT search pick up changes fast; the key is public by design).
 
 ## apps/api (backend — two Lambda functions from one codebase)
 

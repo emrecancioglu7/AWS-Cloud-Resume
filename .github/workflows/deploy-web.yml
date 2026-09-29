@@ -73,3 +73,14 @@ jobs:
       - name: Create CloudFront invalidation
         if: ${{ vars.AWS_CLOUDFRONT_DISTRIBUTION_ID != '' }}
         run: aws cloudfront create-invalidation --distribution-id "${{ vars.AWS_CLOUDFRONT_DISTRIBUTION_ID }}" --paths "/*"
+
+      # IndexNow: tells Bing (which also feeds ChatGPT search / Copilot) and other participating
+      # engines that the pages changed, instead of waiting for them to recrawl. The key is not a
+      # secret — IndexNow verifies it by fetching the matching public file
+      # (apps/web/public/ca3a3cf4f6b8157ac5d24f6653c4b18a.txt, which must never be deleted). Never fails the deploy.
+      - name: Notify search engines (IndexNow)
+        run: |
+          curl -sS -o /dev/null -w "IndexNow HTTP %{http_code}\n" -X POST "https://api.indexnow.org/indexnow" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d '{"host":"emrecancioglu.com","key":"ca3a3cf4f6b8157ac5d24f6653c4b18a","keyLocation":"https://emrecancioglu.com/ca3a3cf4f6b8157ac5d24f6653c4b18a.txt","urlList":["https://emrecancioglu.com/","https://emrecancioglu.com/tr","https://emrecancioglu.com/pdf/Resume_EmreCANCIOGLU.pdf","https://emrecancioglu.com/pdf/Resume_EmreCANCIOGLU_TR.pdf"]}' \
+            || echo "IndexNow ping failed (non-fatal)"
