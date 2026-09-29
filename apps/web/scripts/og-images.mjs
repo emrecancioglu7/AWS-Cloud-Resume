@@ -48,6 +48,30 @@ function ogHtml(c) {
   </body></html>`;
 }
 
+// Share card for /resume.html (the LinkedIn-friendly wrapper around the resume PDF): the PDF's
+// first page, rendered by macOS `sips`, shown as a tilted sheet next to the title.
+function resumeHtml(c, page) {
+  return `<!doctype html><html><head><meta charset="utf-8" />${fonts}<style>
+    * { margin: 0; box-sizing: border-box; }
+    body { width: 1200px; height: 630px; background: #0a0b0d; color: #ececea; font-family: Inter, sans-serif; overflow: hidden; position: relative; }
+    .glow { position: absolute; inset: 0; background: radial-gradient(circle at 78% 40%, rgba(52,211,153,0.22), transparent 50%); }
+    .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 10px; background: #34d399; }
+    .text { position: absolute; left: 88px; top: 150px; width: 560px; }
+    .tag { display: inline-block; padding: 8px 18px; border-radius: 999px; background: rgba(52,211,153,0.14); color: #34d399; font-weight: 600; font-size: 20px; letter-spacing: 2px; }
+    h1 { margin-top: 26px; font-family: "Space Grotesk", sans-serif; font-size: 84px; line-height: 1; font-weight: 700; }
+    .name { margin-top: 18px; font-size: 34px; font-weight: 600; }
+    .role { margin-top: 10px; font-size: 22px; color: #9a9a97; white-space: nowrap; }
+    .sheet { position: absolute; right: 70px; top: 60px; width: 400px; transform: rotate(4deg); border-radius: 6px; background: #fff; box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08); }
+    .url { position: absolute; left: 88px; bottom: 44px; font-size: 22px; color: #9a9a97; }
+  </style></head><body><div class="glow"></div><div class="bar"></div>
+    <div class="text"><span class="tag">PDF · 3 PAGES</span><h1>Resume</h1>
+      <div class="name">${escape(c.profile.name)}</div>
+      <div class="role">${escape(c.experience[0].title)} · Industrial Automation</div></div>
+    <img class="sheet" src="${page}" alt="" />
+    <div class="url">emrecancioglu.com/resume.html</div>
+  </body></html>`;
+}
+
 const iconHtml = `<!doctype html><html><head><meta charset="utf-8" />${fonts}<style>
   * { margin: 0; }
   body { width: 512px; height: 512px; background: #0a0b0d; display: flex; align-items: center; justify-content: center; overflow: hidden; }
@@ -78,6 +102,14 @@ await mkdir(join(publicDir, "og"), { recursive: true });
 await mkdir(join(publicDir, "icons"), { recursive: true });
 await screenshot(ogHtml(en), 1200, 630, join(publicDir, "og/og-en.png"));
 await screenshot(ogHtml(tr), 1200, 630, join(publicDir, "og/og-tr.png"));
+
+const pageDir = await mkdtemp(join(tmpdir(), "resume-"));
+const pagePng = join(pageDir, "page1.png");
+// sips renders a PDF's first page; ships with macOS.
+execFileSync("sips", ["-s", "format", "png", "-Z", "1600", join(publicDir, "pdf/Resume_EmreCANCIOGLU.pdf"), "--out", pagePng], { stdio: "ignore" });
+const page = `data:image/png;base64,${(await readFile(pagePng)).toString("base64")}`;
+await screenshot(resumeHtml(en, page), 1200, 630, join(publicDir, "og/og-resume.png"));
+await rm(pageDir, { recursive: true, force: true });
 
 const icon512 = join(publicDir, "icons/icon-512.png");
 await screenshot(iconHtml, 512, 512, icon512);
