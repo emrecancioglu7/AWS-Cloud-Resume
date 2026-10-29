@@ -9,22 +9,22 @@
 </p>
 
 <p align="center">
-  <a href="https://emrecancioglu.com"><img alt="Live site" src="https://img.shields.io/badge/live-emrecancioglu.com-059669?style=for-the-badge"/></a>
-  <a href="https://github.com/emrecancioglu7/AWS-Cloud-Resume/actions/workflows/deploy-web.yml"><img alt="Deploy web" src="https://img.shields.io/github/actions/workflow/status/emrecancioglu7/AWS-Cloud-Resume/deploy-web.yml?branch=main&label=deploy&style=for-the-badge"/></a>
-  <a href="https://github.com/emrecancioglu7/AWS-Cloud-Resume/actions/workflows/ci-api.yml"><img alt="API CI" src="https://img.shields.io/github/actions/workflow/status/emrecancioglu7/AWS-Cloud-Resume/ci-api.yml?branch=main&label=api%20ci&style=for-the-badge"/></a>
-  <a href="https://cloudresumechallenge.dev/"><img alt="Cloud Resume Challenge" src="https://img.shields.io/badge/Cloud%20Resume-Challenge-FF9900?style=for-the-badge"/></a>
+  <a href="https://emrecancioglu.com"><img alt="Live site" src="docs/readme/badges/live.svg"/></a>
+  <a href="https://github.com/emrecancioglu7/AWS-Cloud-Resume/actions/workflows/deploy-web.yml"><img alt="Deploy web" src="https://github.com/emrecancioglu7/AWS-Cloud-Resume/actions/workflows/deploy-web.yml/badge.svg?branch=main"/></a>
+  <a href="https://github.com/emrecancioglu7/AWS-Cloud-Resume/actions/workflows/ci-api.yml"><img alt="API CI" src="https://github.com/emrecancioglu7/AWS-Cloud-Resume/actions/workflows/ci-api.yml/badge.svg?branch=main"/></a>
+  <a href="https://cloudresumechallenge.dev/"><img alt="Cloud Resume Challenge" src="docs/readme/badges/challenge.svg"/></a>
 </p>
 
 <p align="center">
-  <img alt="AWS" src="https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazonwebservices&logoColor=white"/>
-  <img alt="Terraform" src="https://img.shields.io/badge/Terraform-7B42BC?style=flat-square&logo=terraform&logoColor=white"/>
-  <img alt="React" src="https://img.shields.io/badge/React%2019-20232A?style=flat-square&logo=react&logoColor=61DAFB"/>
-  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white"/>
-  <img alt="Vite" src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white"/>
-  <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind%20v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white"/>
-  <img alt="Node.js" src="https://img.shields.io/badge/Node%2020-339933?style=flat-square&logo=nodedotjs&logoColor=white"/>
-  <img alt="GitHub Actions" src="https://img.shields.io/badge/GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white"/>
-  <img alt="Vitest" src="https://img.shields.io/badge/Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white"/>
+  <img alt="AWS" src="docs/readme/badges/aws.svg"/>
+  <img alt="Terraform" src="docs/readme/badges/terraform.svg"/>
+  <img alt="React" src="docs/readme/badges/react.svg"/>
+  <img alt="TypeScript" src="docs/readme/badges/typescript.svg"/>
+  <img alt="Vite" src="docs/readme/badges/vite.svg"/>
+  <img alt="Tailwind CSS" src="docs/readme/badges/tailwind.svg"/>
+  <img alt="Node.js" src="docs/readme/badges/node.svg"/>
+  <img alt="GitHub Actions" src="docs/readme/badges/github-actions.svg"/>
+  <img alt="Vitest" src="docs/readme/badges/vitest.svg"/>
 </p>
 
 My personal site, **[emrecancioglu.com](https://emrecancioglu.com)**. It started as my entry for **[#TheCloudResumeChallenge](https://cloudresumechallenge.dev/)**: a static resume on S3 with a serverless visitor counter. It has since grown into a full serverless app: a bilingual, prerendered resume site, plus a private admin panel that tracks my fund portfolio and uses AI to analyze credit card statements. All of it runs on AWS and is deployed from this repo.
