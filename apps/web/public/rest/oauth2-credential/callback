@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>LinkedIn bağlantısı tamamlanıyor</title>
+  </head>
+  <body>
+    <p>LinkedIn bağlantısı yerel otomasyon sistemine aktarılıyor…</p>
+    <script>
+      (() => {
+        const localCallback = new URL(
+          "https://localhost:5678/rest/oauth2-credential/callback",
+        );
+        const incoming = new URLSearchParams(window.location.search);
+
+        for (const key of ["code", "state", "error", "error_description"]) {
+          const value = incoming.get(key);
+          if (value !== null) localCallback.searchParams.set(key, value);
+        }
+
+        window.location.replace(localCallback.toString());
+      })();
+    </script>
+    <noscript>
+      Bu bağlantının tamamlanması için JavaScript etkin olmalıdır.
+    </noscript>
+  </body>
+</html>

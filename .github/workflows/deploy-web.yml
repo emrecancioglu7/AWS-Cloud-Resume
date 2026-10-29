@@ -74,6 +74,12 @@ jobs:
           aws s3 cp dist/tr.html "s3://$BUCKET/tr" --acl private \
             --content-type "text/html; charset=utf-8" --cache-control "no-cache"
 
+          # LinkedIn OAuth returns to this extensionless key. It forwards only the OAuth result
+          # parameters to the trusted local n8n callback; no credentials are stored on the site.
+          aws s3 cp dist/rest/oauth2-credential/callback \
+            "s3://$BUCKET/rest/oauth2-credential/callback" --acl private \
+            --content-type "text/html; charset=utf-8" --cache-control "no-store"
+
           # Same for each prerendered publication page: dist/publications/<slug>.html is served at
           # "/publications/<slug>". Keys for slugs that no longer exist are removed afterwards.
           for f in dist/publications/*.html; do
