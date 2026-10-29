@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="120" viewBox="0 0 1200 120" role="img" aria-label="Built on AWS, deployed from this repo — emrecancioglu.com"><title>Built on AWS, deployed from this repo — emrecancioglu.com</title><style>text { font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', Helvetica, Arial, sans-serif; } .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; } 
+    .fade { opacity: 0; animation: fade .7s ease-out forwards; }
+    @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .pulse { stroke-dasharray: 16 600; stroke-dashoffset: 616; animation: flow 2.4s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: 0; } }
+ .wave { animation: sway 6s ease-in-out infinite alternate; }
+    .wave2 { animation: sway 8s ease-in-out infinite alternate-reverse; }
+    @keyframes sway { to { transform: translateX(-40px); } } @media (prefers-reduced-motion: reduce) { * { animation: none !important; } .fade { opacity: 1; } }</style><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#059669"/><stop offset="1" stop-color="#0284c7"/></linearGradient></defs>
+    <path class="wave" d="M0,60 C200,10 400,110 600,60 C800,10 1000,110 1200,60 L1240,120 L-40,120Z" fill="url(#g)" opacity="0.18"/>
+    <path class="wave2" d="M0,80 C200,40 400,120 600,80 C800,40 1000,120 1200,80 L1240,120 L-40,120Z" fill="url(#g)" opacity="0.12"/>
+    <text x="600" y="52" font-size="15" font-weight="500" fill="#5b6168" text-anchor="middle" >Built on AWS · deployed from this repo · emrecancioglu.com</text></svg>

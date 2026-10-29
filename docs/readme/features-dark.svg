@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="230" viewBox="0 0 1200 230" role="img" aria-label="Public resume site: React 19 · Vite · Tailwind v4, English + Turkish, dark/light, SSR-prerendered, SEO-checked · Private admin panel: Cognito SRP login + TOTP MFA, TEFAS fund portfolio tracker, Lazy-loaded, kept out of / · AI statement analysis: Credit card PDF → S3 → Lambda, OpenAI extracts + categorizes, Spending &amp; budget summaries · Infrastructure as code: Terraform, least-privilege IAM, Designed for the free tier, AWS Budgets cost alarm"><title>Public resume site: React 19 · Vite · Tailwind v4, English + Turkish, dark/light, SSR-prerendered, SEO-checked · Private admin panel: Cognito SRP login + TOTP MFA, TEFAS fund portfolio tracker, Lazy-loaded, kept out of / · AI statement analysis: Credit card PDF → S3 → Lambda, OpenAI extracts + categorizes, Spending &amp; budget summaries · Infrastructure as code: Terraform, least-privilege IAM, Designed for the free tier, AWS Budgets cost alarm</title><style>text { font-family: 'Segoe UI', Ubuntu, 'Helvetica Neue', Helvetica, Arial, sans-serif; } .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; } 
+    .fade { opacity: 0; animation: fade .7s ease-out forwards; }
+    @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .pulse { stroke-dasharray: 16 600; stroke-dashoffset: 616; animation: flow 2.4s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: 0; } }
+ 
+    .shine { animation: shine 3s ease-in-out infinite; }
+    @keyframes shine { 0% { transform: translateX(0); opacity: 0; } 20% { opacity: .6; } 60%,100% { transform: translateX(216px); opacity: 0; } }
+     @media (prefers-reduced-motion: reduce) { * { animation: none !important; } .fade { opacity: 1; } }</style><g class="fade" style="animation-delay:0.00s">
+      <rect x="4" y="4" width="286" height="222" rx="14" fill="#11161d" stroke="#1f2a33" stroke-width="1.5"/>
+      <rect x="4" y="4" width="286" height="4" rx="2" fill="#38bdf8"/>
+      <rect x="4" y="4" width="60" height="4" rx="2" fill="#ffffff" opacity="0.6" class="shine" style="animation-delay:0.0s"/>
+      <text x="28" y="56" font-size="24" font-weight="400" fill="#ececea" text-anchor="start" >🌐</text>
+      <text x="68" y="56" font-size="18" font-weight="700" fill="#ececea" text-anchor="start" >Public resume site</text>
+      <line x1="28" y1="78" x2="266" y2="78" stroke="#1f2a33"/>
+      <text x="28" y="120" font-size="14" font-weight="400" fill="#9aa3ab" text-anchor="start" >▸ React 19 · Vite · Tailwind v4</text><text x="28" y="148" font-size="14" font-weight="400" fill="#9aa3ab" text-anchor="start" >▸ English + Turkish, dark/light</text><text x="28" y="176" font-size="14" font-weight="400" fill="#9aa3ab" text-anchor="start" >▸ SSR-prerendered, SEO-checked</text>
+    </g><g class="fade" style="animation-delay:0.15s">
+      <rect x="306" y="4" width="286" height="222" rx="14" fill="#11161d" stroke="#1f2a33" stroke-width="1.5"/>
+      <rect x="306" y="4" width="286" height="4" rx="2" fill="#34d399"/>
+      <rect x="306" y="4" width="60" height="4" rx="2" fill="#ffffff" opacity="0.6" class="shine" style="animation-delay:0.5s"/>
+      <text x="330" y="56" font-size="24" font-weight="400" fill="#ececea" text-anchor="start" >🔐</text>
+      <text x="370" y="56" font-size="18" font-weight="700" fill="#ececea" text-anchor="start" >Private admin panel</text>
+      <line x1="330" y1="78" x2="568" y2="78" stroke="#1f2a33"/>
+      <text x="330" y="120" font-size="14" font-weight="400" fill="#9aa3ab" text-anchor="start" >▸ Cognito SRP login + TOTP MFA</text><text x="330" y="148" font-size="14" font-weight="400" fill="#9aa3ab" text-anchor="start" >▸ TEFAS fund portfolio tracker</text><text x="330" y="176" font-size="14" font-weight="400" fill="#9aa3ab" text-anchor="start" >▸ Lazy-loaded, kept out of /</text>
+    </g><g class="fade" style="animation-delay:0.30s">
+      <rect x="608" y="4" width="286" height="222" rx="14" fill="#11161d" stroke="#1f2a33" stroke-width="1.5"/>
+      <rect x="608" y="4" width="286" height="4" rx="2" fill="#fbbf24"/>
+      <rect x="608" y="4" width="60" height="4" rx="2" fill="#ffffff" opacity="0.6" class="shine" style="animation-delay:1.0s"/>
+      <text x="632" y="56" font-size="24" font-weight="400" fill="#ececea" text-anchor="start" >🤖</text>
+      <text x="672" y="56" font-size="18" font-weight="700" fill="#ececea" text-anchor="start" >AI statement analysis</text>
+      <line x1="632" y1="78" x2="870" y2="78" stroke="#1f2a33"/>
+      <text x="632" y="120" font-size="14" font-weight="400" fill="#9aa3ab" text-anchor="start" >▸ Credit card PDF → S3 → Lambda</text><text x="632" y="148" font-size="14" font-weight="400" fill="#9aa3ab" text-anchor="start" >▸ OpenAI extracts + categorizes</text><text x="632" y="176" font-size="14" font-weight="400" fill="#9aa3ab" text-anchor="start" >▸ Spending &amp; budget summaries</text>
+    </g><g class="fade" style="animation-delay:0.45s">
+      <rect x="910" y="4" width="286" height="222" rx="14" fill="#11161d" stroke="#1f2a33" stroke-width="1.5"/>
+      <rect x="910" y="4" width="286" height="4" rx="2" fill="#34d399"/>
+      <rect x="910" y="4" width="60" height="4" rx="2" fill="#ffffff" opacity="0.6" class="shine" style="animation-delay:1.5s"/>
+      <text x="934" y="56" font-size="24" font-weight="400" fill="#ececea" text-anchor="start" >🏗</text>
+      <text x="974" y="56" font-size="18" font-weight="700" fill="#ececea" text-anchor="start" >Infrastructure as code</text>
+      <line x1="934" y1="78" x2="1172" y2="78" stroke="#1f2a33"/>
+      <text x="934" y="120" font-size="14" font-weight="400" fill="#9aa3ab" text-anchor="start" >▸ Terraform, least-privilege IAM</text><text x="934" y="148" font-size="14" font-weight="400" fill="#9aa3ab" text-anchor="start" >▸ Designed for the free tier</text><text x="934" y="176" font-size="14" font-weight="400" fill="#9aa3ab" text-anchor="start" >▸ AWS Budgets cost alarm</text>
+    </g></svg>
